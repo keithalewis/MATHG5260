@@ -7,4 +7,4 @@ Using `unique.cpp` as a template, follow the directions in `sort.cpp`.
 Be sure you are on the branch you created called **hw1-**_uni_ where
 _uni_ is your id/git account name.
 
-You
+Be sure to issue your pull request before 8:10PM on Thursday Sep. 21.
