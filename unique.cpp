@@ -1,4 +1,4 @@
-// unique.cpp - std::unique from STL
+// unique.cpp - std::unique from the STL
 #include "G5260.h"
 
 using namespace xll;
