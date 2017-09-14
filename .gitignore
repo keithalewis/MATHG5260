@@ -3,3 +3,18 @@
 ################################################################################
 
 /.vs/MATHG5260/v15/.suo
+*.opendb
+*.db
+*.suo
+*.sqlite
+*.ipch
+*.tlog
+*.exp
+*.ilk
+*.lib
+*.log
+*.pdb
+*.xll
+*.obj
+*.idb
+/Debug/xll12.xml
