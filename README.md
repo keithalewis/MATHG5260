@@ -9,8 +9,10 @@ Go to Team Explorer/Home/Branches and select **master**.
 
 Before doing homework go to Team Explorer/Home/Sync and hit Sync.
 
-To do the homework for lesson _n_ go to Team Explorer/Home/Branches and select **hw**_n_
-and create a new branch called **hw**_n_**-**_uni_ where _uni_ is your id/git account name.
+To do the homework for lesson _n_ go to Team Explorer/Home/Branches and 
+select `remotes/origin/`**hw**_n_
+and right click to create a New Local Branch From... called 
+**hw**_n_**-**_uni_ where _uni_ is your id/git account name.
 
 The `README.md` file will contain instructions for the homework.
 
