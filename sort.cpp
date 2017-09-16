@@ -17,6 +17,7 @@ LPOPER WINAPI xll_sort(LPOPER po)
 	static OPER o;
 
 	try {
+		//notes
 		//sorts the data in the input vector
 		std::sort(po->begin(), po->end());
 		//adjusts the size of the output vector to match the size of the input vector
