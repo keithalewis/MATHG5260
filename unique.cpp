@@ -9,6 +9,7 @@ AddIn xai_unique(
     .FunctionHelp(L"Remove adjacent duplicate entries from range.")
     .Category(CATEGORY)
 );
+
 LPOPER WINAPI xll_unique(LPOPER po)
 {
 #pragma XLLEXPORT
@@ -16,8 +17,11 @@ LPOPER WINAPI xll_unique(LPOPER po)
 
     try {
         auto e = std::unique(po->begin(), po->end());
-        o.resize(1, std::distance(po->begin(), e));
-        std::copy(po->begin(), e, o.begin());
+        if(po->rows() == 1)
+			o.resize(1, std::distance(po->begin(), e));
+		else
+			o.resize(std::distance(po->begin(), e), 1);
+		std::copy(po->begin(), e, o.begin());
     }
     catch (const std::exception& ex) {
         XLL_ERROR(ex.what());
