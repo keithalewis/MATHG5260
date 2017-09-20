@@ -31,6 +31,6 @@ LPOPER WINAPI xll_sort(LPOPER po)
 		o = OPER(xlerr::NA);
 	}
 
-	return &o;
+	return &wewo;
 }
 
