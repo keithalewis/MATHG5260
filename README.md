@@ -1,10 +1,22 @@
 # MATHG5260 Programming for Quantitative and Computational Finance
 
-## Homework 1
+Log into https::github.com and create a fork of https://github.com/kal2222/MATHG5260.
 
-Using `unique.cpp` as a template, follow the directions in `sort.cpp`.
+Start Visual Studio 2017 and go to the Team Explorer tab.  
+Select the `Connect` button at the top.  
+Under the GitHub section choose `Clone` and paste the URL above to get a copy of the repository on your local disk.    
+Clone https://github.com/keithalewis/xll12 to the same folder. 
 
-Be sure you are on the branch you created called **hw1-**_uni_ where
-_uni_ is your id/git account name.
+Selet the `Home` button at the top, choose `Branches`, and select **master**. 
 
-Be sure to issue your pull request before 8:10PM on Thursday Sep. 21.
+To do the homework for lesson _n_ go to Team Explorer/Home/Branches and 
+select `remotes/origin`, choose `**hw**`_n_ and right click to create a 
+`New Local Branch From...` called `**hw**`_n_`**-**`_uni_ where _uni_ is your 
+id/git account name.
+
+The `README.md` file will contain instructions for the homework.
+
+You can commit and push your code to your branch as you see fit.
+
+To submit your homework issue a pull request to MATHG5260 prior to 8:10PM on the due date.
+
