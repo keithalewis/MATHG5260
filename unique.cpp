@@ -19,7 +19,7 @@ LPOPER WINAPI xll_unique(LPOPER po)
         if (po->rows() == 1) {
             o.resize(1, std::distance(po->begin(), e));
         }
-        else {
+        else {)
             o.resize(std::distance(po->begin(), e), 1);
         }
         std::copy(po->begin(), e, o.begin());
