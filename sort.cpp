@@ -1,6 +1,7 @@
 // sort.cpp - std::sort from the STL
 //!!! Write xll_sort that calls std::sort and hook it up to XLL.SORT in Excel.
 
+
 #include "G5260.h"
 
 using namespace xll;
@@ -17,14 +18,16 @@ LPOPER WINAPI xll_sort(LPOPER po)
 	static OPER o;
 
 	try {
+
 		std::sort(po->begin(), po->end());
-		o.resize(1, std::distance(po->begin(), po));
-		std::copy(po->begin(), po, o.begin());
+		
+		
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
 		o = OPER(xlerr::NA);
 	}
 
-	return &o;
+	return po;
 }
+
