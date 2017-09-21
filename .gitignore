@@ -18,3 +18,4 @@
 *.obj
 *.idb
 /Debug/xll12.xml
+/x64/Debug/xll12.lib.lastcodeanalysissucceeded
