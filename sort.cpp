@@ -14,7 +14,7 @@ using namespace xll;
 AddIn xai_sort(
 	Function(XLL_LPOPER, L"?xll_sort", L"XLL.SORT")
 	.Arg(XLL_LPOPER, L"range", L"is a range.")
-	.FunctionHelp(L"Sort entries from range.")
+	.FunctionHelp(L"Sort all entries from range.")
 	.Category(CATEGORY)
 );
 LPOPER WINAPI xll_sort(LPOPER po)
