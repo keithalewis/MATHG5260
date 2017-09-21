@@ -1,6 +1,6 @@
 // unique.cpp - std::unique from the STL
 #include "G5260.h"
-
+/*
 using namespace xll;
 
 AddIn xai_unique(
@@ -26,4 +26,4 @@ LPOPER WINAPI xll_unique(LPOPER po)
 
     return &o;
 }
-
+*/
