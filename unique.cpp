@@ -1,5 +1,5 @@
-// unique.cpp - std::unique from the STL
 #include "G5260.h"
+// unique.cpp - std::unique from the STL
 
 using namespace xll;
 
@@ -19,7 +19,7 @@ LPOPER WINAPI xll_unique(LPOPER po)
         if (po->rows() == 1) {
             o.resize(1, std::distance(po->begin(), e));
         }
-        else {
+        else {)
             o.resize(std::distance(po->begin(), e), 1);
         }
         std::copy(po->begin(), e, o.begin());
