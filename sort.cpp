@@ -17,10 +17,10 @@ LPOPER WINAPI xll_sort(LPOPER po)
 	try {
 		std::sort(po->begin(), po->end());
 		if (po->rows() == 1) {
-			o.resize(1, std::distance(po->begin(), po->end()));
+			o.resize(1, po->columns());
 		}
 		else {
-			o.resize(std::distance(po->begin(), po->end()), 1);
+			o.resize(po->rows(), po->columns());
 		}
 		std::copy(po->begin(), po->end(), o.begin());
 	}
