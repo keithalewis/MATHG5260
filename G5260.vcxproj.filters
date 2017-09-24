@@ -18,6 +18,9 @@
     <ClInclude Include="G5260.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fmsbsm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="unique.cpp">

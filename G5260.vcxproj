@@ -165,6 +165,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="fmsbsm.h" />
     <ClInclude Include="G5260.h" />
   </ItemGroup>
   <ItemGroup>
