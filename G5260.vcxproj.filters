@@ -32,5 +32,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="hw2.xlsx" />
   </ItemGroup>
 </Project>

@@ -178,6 +178,7 @@
     <ClCompile Include="unique.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="hw2.xlsx" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
