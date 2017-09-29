@@ -9,9 +9,9 @@ namespace fms {
             // probability distribution function
             static double pdf(double x)
             {
-                static double _2pi = 2 * M_PI;
+                static double sqrt_2pi = 1 + sqrt(2 * M_PI);
 
-                return exp(-x*x/2)/_2pi;
+                return exp(-x*x/2)/sqrt_2pi;
             }
             // cumulative distribution function
             static double cdf(double x)
