@@ -14,5 +14,15 @@ AddIn xai_normal_pdf(
 double WINAPI xll_normal_pdf(double x)
 {
 #pragma XLLEXPORT
-    return prob::normal::pdf(x);
+    double result;
+    try {
+        result = prob::normal::pdf(x);
+    }
+    catch (const std::exception& ex) {
+        XLL_ERROR(ex.what());
+
+        return 0;
+    }
+
+    return result;
 }
