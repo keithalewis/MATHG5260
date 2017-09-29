@@ -26,3 +26,13 @@ double WINAPI xll_normal_pdf(double x)
 
     return result;
 }
+
+#ifdef _DEBUG
+
+xll::test test_normal_pdf([]() {
+    double x = xll_normal_pdf(0);
+    double x_ = 1/sqrt(2*M_PI);
+    ensure (x == x_);
+});
+
+#endif // _DEBUG
