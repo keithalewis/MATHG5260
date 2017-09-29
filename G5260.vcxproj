@@ -165,8 +165,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="fmsbsm.h" />
+    <ClInclude Include="black.h" />
+    <ClInclude Include="bsm.h" />
     <ClInclude Include="G5260.h" />
+    <ClInclude Include="prob.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\xll12\xll12.vcxproj">
@@ -176,6 +178,7 @@
   <ItemGroup>
     <ClCompile Include="sort.cpp" />
     <ClCompile Include="unique.cpp" />
+    <ClCompile Include="xllprob.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="hw2.xlsx" />
