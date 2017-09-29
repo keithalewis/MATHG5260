@@ -16,7 +16,7 @@ namespace fms {
             // cumulative distribution function
             static double cdf(double x)
             {
-                return std::erf(x/std::sqrt(2)); 
+                return 0.5 + std::erf(x/std::sqrt(2))/2; 
             }
         };
     } // prob
