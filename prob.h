@@ -9,14 +9,16 @@ namespace fms {
             // probability distribution function
             static double pdf(double x)
             {
-                static double sqrt_2pi = sqrt(2 * M_PI);
+                static double sqrt_2pi = std::sqrt(2 * M_PI);
 
                 return exp(-x*x/2)/sqrt_2pi;
             }
             // cumulative distribution function
             static double cdf(double x)
             {
-                return 0.5 + std::erf(x/std::sqrt(2))/2; 
+                static double sqrt2 = std::sqrt(2);
+
+                return 0.5 + std::erf(x/sqrt2)/2; 
             }
         };
     } // prob

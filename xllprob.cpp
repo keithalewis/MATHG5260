@@ -6,7 +6,7 @@ using namespace fms;
 using namespace xll;
 
 AddIn xai_normal_pdf(
-    Function(XLL_DOUBLE, L"?xll_normal_pdf", L"NORMAL.PDF")
+    Function(XLL_DOUBLE, L"?xll_normal_pdf", L"PROB.NORMAL.PDF")
     .Arg(XLL_DOUBLE, L"x", L"is a number")
     .Category(L"FMS")
     .FunctionHelp(L"Return the standard normal probability density function.")
@@ -39,7 +39,7 @@ xll::test test_normal_pdf([]() {
 */
 
 AddIn xai_normal_cdf(
-    Function(XLL_DOUBLE, L"?xll_normal_cdf", L"NORMAL.CDF")
+    Function(XLL_DOUBLE, L"?xll_normal_cdf", L"PROB.NORMAL.CDF")
     .Arg(XLL_DOUBLE, L"x", L"is a number")
     .Category(L"FMS")
     .FunctionHelp(L"Return the standard normal cumulative distribution.")
@@ -48,6 +48,7 @@ double WINAPI xll_normal_cdf(double x)
 {
 #pragma XLLEXPORT
     double result;
+
     try {
         result = prob::normal::cdf(x);
     }
