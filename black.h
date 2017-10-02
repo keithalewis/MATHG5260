@@ -1,14 +1,13 @@
-// fmsbsm.h - Black-Sholes/Merton
-// Formulas for pricing options using the Black-Scholes/Merton model.
+// black.h - Black forward option value.
 #pragma once
+#include "prob.h"
 
 /*
-Fischer Black forward value model.
-
-For a put option at k, on F = f exp(-sigma^2t/2 + sigma B_t)
+The forward is F = f exp(-sigma^2 t/2 + sigma B_t)
 where B_t is Brownian motion at time t.
 
-Option forward value = E max{k - F, 0}.
+A put option with strike k has forward value 
+E max{k - F, 0}.
 
 If N is normal, then E exp(N) = exp(E(N) + Var(N)/2)).
 Also E f exp(N) g(N) = E f exp(N) E g(N + Var(N)).
@@ -41,10 +40,17 @@ namespace fms {
 
     namespace black {
 
+        //!!! Find and fix the bug in this code.
         template<class F, class S, class K, class T>
-        inline auto put(F f, S s, K k, T t)
+        inline auto put(F f, S sigma, K k, T t)
         {
-            return 0;
+            auto s = sigma*std::sqrt(t);
+            auto z = (s*s/2 + log(k/f))/s;
+            auto z_ = z - s*s;
+            auto N = fms::prob::normal::cdf(z);
+            auto N_ = fms::prob::normal::cdf(z_);
+            
+            return k * N - f * N_;
         }
     
     } // namespace black
