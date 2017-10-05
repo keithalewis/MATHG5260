@@ -13,10 +13,22 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="fms">
+      <UniqueIdentifier>{ad957250-0f57-40ad-b851-1cdb76a7c788}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="G5260.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="black.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="bsm.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="prob.h">
+      <Filter>fms</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -26,8 +38,15 @@
     <ClCompile Include="sort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="xllprob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xllblack.cpp">
+      <Filter>fms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="hw2.xlsx" />
   </ItemGroup>
 </Project>

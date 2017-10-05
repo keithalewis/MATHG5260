@@ -23,7 +23,7 @@
     <ProjectGuid>{03095D3C-723C-4BBB-89A0-27B9DC01FB3D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>G5260</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -165,7 +165,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="black.h" />
+    <ClInclude Include="bsm.h" />
     <ClInclude Include="G5260.h" />
+    <ClInclude Include="prob.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\xll12\xll12.vcxproj">
@@ -175,8 +178,11 @@
   <ItemGroup>
     <ClCompile Include="sort.cpp" />
     <ClCompile Include="unique.cpp" />
+    <ClCompile Include="xllblack.cpp" />
+    <ClCompile Include="xllprob.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="hw2.xlsx" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
