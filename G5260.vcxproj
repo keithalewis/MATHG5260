@@ -167,8 +167,10 @@
   <ItemGroup>
     <ClInclude Include="black.h" />
     <ClInclude Include="bsm.h" />
+    <ClInclude Include="ensure.h" />
     <ClInclude Include="G5260.h" />
     <ClInclude Include="prob.h" />
+    <ClInclude Include="root1d.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\xll12\xll12.vcxproj">
