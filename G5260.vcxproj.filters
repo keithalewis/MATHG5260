@@ -30,6 +30,12 @@
     <ClInclude Include="prob.h">
       <Filter>fms</Filter>
     </ClInclude>
+    <ClInclude Include="ensure.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="root1d.h">
+      <Filter>fms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="unique.cpp">

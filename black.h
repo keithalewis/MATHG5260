@@ -1,5 +1,7 @@
 // black.h - Black forward option value.
 #pragma once
+#include <algorithm>
+#include "ensure.h"
 #include "prob.h"
 
 /*
@@ -34,23 +36,99 @@ So E max{k - F, 0}
 
  E max{k - F, 0} = k N(z) - f N(z^*).
 
+ d/df E g(F) = E g'(F) F/f = E g'(F exp(s^2))
 */
 
 namespace fms {
 
     namespace black {
 
-        //!!! Find and fix the bug in this code.
-        template<class F, class S, class K, class T>
-        inline auto put(F f, S sigma, K k, T t)
+        template<class F, class S, class K>
+        inline auto value(F f, S s, K k)
         {
-            auto s = sigma*std::sqrt(t);
-            auto z = (s*s/2 + log(k/f))/s;
-            auto z_ = z - s*s;
+            ensure (f >= 0);
+            ensure (s >= 0);
+            ensure (k >= 0);
+
+            if (f == 0 || s == 0)
+                return k <= f ? k - f : 0;
+
+            if (k == 0)
+                return (F)0;
+
+            auto z = s/2 + log(k/f)/s;
+            auto z_ = z - s;
             auto N = fms::prob::normal::cdf(z);
             auto N_ = fms::prob::normal::cdf(z_);
             
             return k * N - f * N_;
+        }
+        // derivative of value with respect to forward
+        template<class F, class S, class K>
+        inline auto delta(F f, S s, K k)
+        {
+            ensure (f >= 0);
+            ensure (s >= 0);
+            ensure (k >= 0);
+
+            if (f == 0 || s == 0)
+                return 1*(k >= f);
+
+            if (k == 0)
+                return 0;
+
+            auto z_ = -s/2 + log(k/f)/s;
+
+            return - fms::prob::normal::cdf(z_);
+        }
+        
+        // forward put value
+        template<class F, class S, class K, class T>
+        inline auto put(F f, S sigma, K k, T t)
+        {
+            return value(f, sigma*sqrt(t), k);
+        }
+        template<class F, class S, class K, class T>
+        inline auto put_delta(F f, S sigma, K k, T t)
+        {
+            return delta(f, sigma*sqrt(t), k);
+        }
+        template<class F, class S, class K, class T>
+        inline auto put_vega(F f, S sigma, K k, T t)
+        {
+            ensure (f > 0);
+            ensure (sigma > 0);
+            ensure (k > 0);
+            ensure (t > 0);
+
+            auto s = sigma*sqrt(t);
+            auto z = s/2 + log(k/f)/s;
+            auto n = fms::prob::normal::pdf(z);
+            
+            return f*n*s;
+        }
+        //!!! implement this and create the add-in
+        //!!! BLACK.PUT.IMPLIED.VOLATILITY
+        // volatility that matches put price
+        template<class F, class P, class K, class T>
+        inline auto put_implied_volatility(F f, P p, K k, T t)
+        {
+            // use lambdas for f and df in newton_solve
+
+            return 0;
+        }
+
+        // forward call value using put-call parity
+        // c - p = f - k
+        template<class F, class S, class K, class T>
+        inline auto call(F f, S sigma, K k, T t)
+        {
+            return put(f, sigma, k, t) + f - k;
+        }
+        template<class F, class S, class K, class T>
+        inline auto call_delta(F f, S sigma, K k, T t)
+        {
+            return put_delta(f, sigma, k, t) + 1;
         }
     
     } // namespace black
