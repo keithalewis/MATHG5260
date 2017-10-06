@@ -114,7 +114,7 @@ namespace fms {
         inline auto put_implied_volatility(F f, P p, K k, T t)
         {
             // use lambdas for f and df in newton_solve
-
+            fms::newton_solve::(p,put(),);
             return 0;
         }
 
