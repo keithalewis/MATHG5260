@@ -35,9 +35,9 @@ namespace fms {
             // Use Newton's method.
             X x_ = newton(x, f(x), df(x));
             // Stop when 1 + (x_ - x) == 1.
-            // while (something) {
-            //   next guess
-            // }
+            while (1 + (x_ - x) != 1) {
+              x_=newton(x_,f(x_),df(x_));
+            }
             
             return x_;
         }
