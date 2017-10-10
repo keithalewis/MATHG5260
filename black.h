@@ -101,11 +101,12 @@ namespace fms {
             ensure (k > 0);
             ensure (t > 0);
 
-            auto s = sigma*sqrt(t);
+            auto sqt = sqrt(t);
+            auto s = sigma*sqt;
             auto z = s/2 + log(k/f)/s;
             auto n = fms::prob::normal::pdf(z);
             
-            return f*n*s;
+            return f*n*sqt;
         }
         //!!! implement this and create the add-in
         //!!! BLACK.PUT.IMPLIED.VOLATILITY
