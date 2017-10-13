@@ -1,7 +1,9 @@
 // root1d.h - one dimensional root finding
 #pragma once
-#include "ensure.h"
 #include <functional>
+#include <limits>
+#include "ensure.h"
+#include "ulp.h"
 
 namespace fms {
     namespace root1d {
@@ -28,16 +30,20 @@ namespace fms {
         {
             return x0 - y0/dy;
         }
-        //!!! implement a one dimensional root finder
+
         template<class X, class Y>
-        inline X newton_solve(X x, const std::function<Y(X)>& f, const std::function<Y(X)>& df)
+        inline X newton_solve(X x, const std::function<Y(X)>& f, const std::function<Y(X)>& df, 
+            size_t iter = 100, long long ulp = 10)
         {
-            // Use Newton's method.
             X x_ = newton(x, f(x), df(x));
-            // Stop when 1 + (x_ - x) == 1.
-            // while (something) {
-            //   next guess
-            // }
+
+            while (abs(fms::ulp(x_, x)) >= ulp) {
+                if (iter-- == 0) {
+                    return std::numeric_limits<X>::quiet_NaN();
+                }
+               x = x_;
+               x_ = newton(x, f(x), df(x));
+            }
             
             return x_;
         }
