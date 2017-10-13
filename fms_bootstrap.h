@@ -35,10 +35,10 @@ namespace pwflat {
         //!!!    return closed form solution for f
         //!!! }
 
-		auto pv = [p, m, u, c, n, t, f](double _f) {
+		std::function<double(double)> pv = [p, m, u, c, n, t, f](double _f) {
 			return -p + present_value(m, u, c, n, t, f, _f);
 		};
-		auto dpv = [m, u, c, n, t, f](double _f) {
+		std::function<double(double)> dpv = [m, u, c, n, t, f](double _f) {
 			return duration_extrapolated(m, u, c, n, t, f, _f);
 		};
 
@@ -46,7 +46,7 @@ namespace pwflat {
 		if (n > 0)
 			_f = f[n-1];
 
-		_f = root1d::newton<F,F>(_f, pv, dpv);
+		_f = root1d::newton_solve<F,F>(_f, pv, dpv);
 
 		return _f;
 	}

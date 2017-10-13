@@ -59,6 +59,9 @@
     <ClCompile Include="xll_prob.cpp">
       <Filter>xll</Filter>
     </ClCompile>
+    <ClCompile Include="xll_bootstrap.cpp">
+      <Filter>xll</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

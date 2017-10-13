@@ -21,7 +21,7 @@ namespace fms {
 namespace pwflat {
 
     template<class X>
-    using qNaN = std::numeric_limits<X>::quiet_NaN();
+    constexpr X qNaN() { return std::numeric_limits<X>::quiet_NaN(); }
 
 	// strictly increasing values
 	template<class I>
