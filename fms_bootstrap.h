@@ -11,12 +11,14 @@ namespace pwflat {
 	template<class T, class F>
 	inline F bootstrap(F p, size_t m, const T* u, const F* c, size_t n, const T* t, const F* f, F _f = 0)
 	{
+        // expiration must be past the end of the forward curve
         if (m == 0 || n != 0 && u[m-1] <= t[n-1])
             return std::numeric_limits<F>::quiet_NaN();
 
         // Zero coupon bond (m == 1)
         // p = c0 D(u0)
-        // Dn = 1 if n == 0, D(t[n-1]) if n > 0.
+        // if n == 0 then Dn = 1
+        // else Dn = D(t[n-1])
         // D(u0) = Dn*exp(-f*(u[0] - t[n-1])).
         //!!! if (m == 1) {
         //!!!    return closed form solution for f
