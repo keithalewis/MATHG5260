@@ -1,5 +1,5 @@
-// xllprob.cpp - probability functions
-#include "prob.h"
+// xll_prob.cpp - probability functions
+#include "fms_prob.h"
 #include "xll/xll.h"
 
 using namespace fms;

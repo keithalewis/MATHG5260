@@ -16,24 +16,33 @@
     <Filter Include="fms">
       <UniqueIdentifier>{ad957250-0f57-40ad-b851-1cdb76a7c788}</UniqueIdentifier>
     </Filter>
+    <Filter Include="xll">
+      <UniqueIdentifier>{19c38cba-159d-4ef3-b837-13ea3c1f3bae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="G5260.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="black.h">
-      <Filter>fms</Filter>
-    </ClInclude>
-    <ClInclude Include="bsm.h">
-      <Filter>fms</Filter>
-    </ClInclude>
-    <ClInclude Include="prob.h">
-      <Filter>fms</Filter>
-    </ClInclude>
     <ClInclude Include="ensure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="root1d.h">
+    <ClInclude Include="fms_bootstrap.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="fms_root1d.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="fms_pwflat.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="fms_black.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="fms_bsm.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="fms_prob.h">
       <Filter>fms</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,11 +53,14 @@
     <ClCompile Include="sort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="xllprob.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="xll_black.cpp">
+      <Filter>xll</Filter>
     </ClCompile>
-    <ClCompile Include="xllblack.cpp">
-      <Filter>fms</Filter>
+    <ClCompile Include="xll_prob.cpp">
+      <Filter>xll</Filter>
+    </ClCompile>
+    <ClCompile Include="xll_bootstrap.cpp">
+      <Filter>xll</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
