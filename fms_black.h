@@ -2,7 +2,8 @@
 #pragma once
 #include <algorithm>
 #include "ensure.h"
-#include "prob.h"
+#include "fms_prob.h"
+#include "fms_root1d.h"
 
 /*
 The forward is F = f exp(-sigma^2 t/2 + sigma B_t)
@@ -72,10 +73,10 @@ namespace fms {
             ensure (k >= 0);
 
             if (f == 0 || s == 0)
-                return 1*(k >= f);
+                return 1.*(k >= f);
 
             if (k == 0)
-                return 0;
+                return 0.;
 
             auto z_ = -s/2 + log(k/f)/s;
 
@@ -88,11 +89,42 @@ namespace fms {
         {
             return value(f, sigma*sqrt(t), k);
         }
+#ifdef _DEBUG
+        namespace {
+            void test_put(void)
+            {
+                double f = 100;
+                double sigma = .2;
+                double k = 100;
+                double t = .25;
+                double p = put(f, sigma, k, t);
+                double eps = std::numeric_limits<double>::epsilon();
+                ensure (fabs(p - put(f, sigma, k, t)) < 3*eps);
+            }
+        }
+#endif // _DEBUG
         template<class F, class S, class K, class T>
         inline auto put_delta(F f, S sigma, K k, T t)
         {
             return delta(f, sigma*sqrt(t), k);
         }
+#ifdef _DEBUG
+        namespace {
+            void test_put_delta(void)
+            {
+                double f = 100;
+                double sigma = .2;
+                double k = 100;
+                double t = .25;
+                double eps = sqrt(std::numeric_limits<double>::epsilon());
+                double up = put(f + eps, sigma, k, t);
+                double dn = put(f - eps, sigma, k, t);
+                double delta = (up - dn)/(2*eps);
+                ensure (fabs(delta - put_delta(f, sigma, k, t)) < 3*eps);
+            }
+        }
+#endif // _DEBUG
+
         template<class F, class S, class K, class T>
         inline auto put_vega(F f, S sigma, K k, T t)
         {
@@ -108,15 +140,37 @@ namespace fms {
             
             return f*n*sqt;
         }
-        //!!! implement this and create the add-in
-        //!!! BLACK.PUT.IMPLIED.VOLATILITY
+#ifdef _DEBUG
+        namespace {
+            void test_put_vega(void)
+            {
+                double f = 100;
+                double sigma = .2;
+                double k = 100;
+                double t = .25;
+                double eps = sqrt(std::numeric_limits<double>::epsilon());
+                double up = put(f, sigma + eps, k, t);
+                double dn = put(f, sigma - eps, k, t);
+                double vega = (up - dn)/(2*eps);
+                ensure (fabs(vega - put_vega(f, sigma, k, t)) < 3*eps);
+            }
+        }
+#endif // _DEBUG
         // volatility that matches put price
         template<class F, class P, class K, class T>
-        inline auto put_implied_volatility(F f, P p, K k, T t)
+        inline auto put_implied_volatility(F f, P p, K k, T t, 
+            P sigma = .2, size_t iter = 100, long long ulp = 10)
         {
             // use lambdas for f and df in newton_solve
+            std::function<P(P)> F = [f, p, k, t](P s) { 
+                return put(f, s, k, t) - p; 
+            };
+            std::function<P(P)> dF  = [f, k, t](P s) { 
+                return put_vega(f, s, k, t); 
+            };
+            sigma = fms::root1d::newton_solve(sigma, F, dF, iter, ulp);
 
-            return 0;
+            return sigma;
         }
 
         // forward call value using put-call parity
