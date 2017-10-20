@@ -169,6 +169,8 @@
     <ClInclude Include="fms_bsm.h" />
     <ClInclude Include="ensure.h" />
     <ClInclude Include="fms_bootstrap.h" />
+    <ClInclude Include="fms_date.h" />
+    <ClInclude Include="fms_fixed_income.h" />
     <ClInclude Include="fms_pwflat.h" />
     <ClInclude Include="G5260.h" />
     <ClInclude Include="fms_prob.h" />
@@ -183,6 +185,8 @@
     <ClCompile Include="sort.cpp" />
     <ClCompile Include="unique.cpp" />
     <ClCompile Include="xll_bootstrap.cpp" />
+    <ClCompile Include="xll_date.cpp" />
+    <ClCompile Include="xll_fixed_income.cpp" />
     <ClCompile Include="xll_prob.cpp" />
     <ClCompile Include="xll_black.cpp" />
     <ClCompile Include="xll_pwflat.cpp" />

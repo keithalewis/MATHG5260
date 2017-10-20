@@ -45,6 +45,12 @@
     <ClInclude Include="fms_prob.h">
       <Filter>fms</Filter>
     </ClInclude>
+    <ClInclude Include="fms_date.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="fms_fixed_income.h">
+      <Filter>fms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="unique.cpp">
@@ -63,6 +69,12 @@
       <Filter>xll</Filter>
     </ClCompile>
     <ClCompile Include="xll_pwflat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xll_date.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xll_fixed_income.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

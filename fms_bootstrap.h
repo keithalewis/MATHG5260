@@ -3,6 +3,7 @@
 #include <limits>
 #include "fms_root1d.h"
 #include "fms_pwflat.h"
+#include "fms_fixed_income.h"
 
 namespace fms {
 namespace pwflat {
@@ -20,20 +21,54 @@ namespace pwflat {
         // if n == 0 then Dn = 1
         // else Dn = D(t[n-1])
         // D(u0) = Dn*exp(-f*(u[0] - t[n-1])).
-        //!!! if (m == 1) {
-        //!!!    return closed form solution for f
-        //!!! }
+        // p = c0 Dn*exp(-f dt);
+        // log(p/(c0 Dn)) = -f dt
+        // f = -log(p/(c0 Dn))/dt
+        if (m == 1) {
+            auto Dn = n == 0 ? 1 : discount(t[n-1], n, t, f);
+            auto tn = n == 0 ? 0 : t[n-1];
+            auto dt = u[0] - tn;
+         
+            _f = -log(p/(c[0]*Dn))/dt;
+
+            return _f;
+        }
 
         // Forward rate agreement (m == 2 and p = 0)
         // 0 = c0 D(u0) + c1 D(u1)
         // if n == 0 then 0 = c0 exp(-f u0) + c1 exp (-f u1)
-        // if u0 < t[n-1] then D(u0) = discount(u0)
-        //   and D(u1) = ???
-        // else D(u0) = discount(t[n-1])*exp(-f(u0 - t[n-1]))
-        //   and D(u1) = ???
-        //!!! if (m == 2 && p == 0) {
-        //!!!    return closed form solution for f
-        //!!! }
+        // c0 exp(-f u0) = -c1 exp (-f u1)
+        // so exp(-f u0)/exp(-f u1) = - c1/c0.
+        //    exp(f(u1 - u0)) = - c1/c0
+        //    f = log(-c1/c0)/(u1 - u0)
+        // if u0 < t[n-1] 
+        // then D(u0) = discount(u0)
+        // and D(u1) = Dn exp(-f(u1 - t[n-1])
+        // so 0 = c0 Du0 + c1 Dn exp(-f(u1 - tn))
+        //    exp(-f dt) = -c0 Du0/(c1 Dn)
+        //    f = log(-c0 Du0/(c1 Dn)/dt
+        // if u0 > t[n-1] 
+        // then D(u0) = Dn exp(-f(u0 - t[n-1])
+        // and D(u1) = Dn exp(-f(u1 - t[n-1]))
+        if (m == 2 && p == 0) {
+            auto c10 = c[1]/c[0];
+            if (c10 >= 0)
+                return std::numeric_limits<F>::quiet_NaN();
+            if (n == 0)
+                _f = log(-c10)/(u[1] - u[0]);
+            else {
+                if (u[0] < t[n-1]) {
+                    auto Du0 = discount(u[0], n, t, f);
+                    auto Dn = discount(t[n-1], n, t, f);
+                    _f = log(-c[0]*Du0/(c[1]*Dn))/(u[1] - t[n-1]);
+                }
+                else {
+                    //... 
+                }
+            }
+            
+            return _f;
+        }
 
 		std::function<double(double)> pv = [p, m, u, c, n, t, f](double _f) {
 			return -p + present_value(m, u, c, n, t, f, _f);
@@ -51,5 +86,19 @@ namespace pwflat {
 		return _f;
 	}
 
+    /*
+    template<class T, class F>
+    curve<T,F> bootstrap("container of instruments")
+    {
+        curve<T,F> f;
+
+        for (const auto& i : instruments) {
+            T t = i.maturity();
+            f.push_back(make_pair(t, bootstrap(i.price, i, f)));
+        }
+
+        return f;
+    }
+    */
 }
 } // namespace fms
