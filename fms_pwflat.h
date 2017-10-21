@@ -16,6 +16,7 @@
 #include <algorithm> // adjacent_find
 #include <limits>    // quiet_Nan()
 #include <numeric>   // upper/lower_bound
+#include <vector>
 
 namespace fms {
 namespace pwflat {
@@ -37,18 +38,14 @@ namespace pwflat {
 		return monotonic(t, t + n);
 	}
 
-	// piecewise flat curve
+    // piecewise flat curve
 	// return f[i] if t[i-1] < u <= t[i], _f if u > t[n-1]
 	// assumes t[i] monotonically increasing
 	template<class T, class F>
-	inline F value(const T& u, size_t n, const T* t, const F* f, const F& _f = std::numeric_limits<F>::quiet_NaN())
+	inline F value(const T& u, size_t n, const T* t, const F* f, const F& _f = qNaN<F>())
 	{
-#ifdef _DEBUG
-		if (!monotonic(n, t))
-			return std::numeric_limits<F>::quiet_NaN();
-#endif
 		if (u < 0)
-			return std::numeric_limits<F>::quiet_NaN();
+			return qNaN<F>();
 		if (n == 0)
 			return _f;
 
@@ -62,7 +59,7 @@ namespace pwflat {
 	inline F integral(const T& u, size_t n, const T* t, const F* f, const F& _f = std::numeric_limits<F>::quiet_NaN())
 	{
 		if (u < 0)
-			return std::numeric_limits<T>::quiet_NaN();
+			return qNaN<F>();
 
 		F I{0};
 		T t_{0};
@@ -91,9 +88,86 @@ namespace pwflat {
 		return u <= t[0] ? f[0] : integral(u, n, t, f, _f)/u;
 	}
 
+    // NVI class
+    // https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Non-Virtual_Interface
+    template<class T = double, class F = double>
+    class interface {
+    public:
+        typedef T time_type;
+        typedef F rate_type;
+        virtual ~interface() { }
+        size_t   size() const { return _size(); }
+        const T* time() const { return _time(); }
+        const F* rate() const { return _rate(); }
+        T value(T u, const F& _f = qNaN<F>()) const
+        {
+            return pwflat::value(u, size(), time(), rate(), _f);
+        }
+        T operator()(T u, const F& _f = qNaN<F>()) const
+        {
+            return value(u, _f);
+        }
+        T integral(T u, const F& _f = qNaN<F>()) const
+        {
+            return integral(u, size(), time(), rate(), _f);
+        }
+        T spot(T u, const F& _f = qNaN<F>()) const
+        {
+            return spot(u, size(), time(), rate(), _f);
+        }
+    private:
+        // override in base class
+        virtual size_t   _size() const = 0;
+        virtual const T* _time() const = 0;
+        virtual const F* _rate() const = 0;
+    };
+
+    template<class T = double, class F = double>
+    class curve : public interface<T,F> {
+        std::vector<T> t_;
+        std::vector<F> f_;
+    public:
+        curve()
+        { }
+        curve(size_t n, const T* t, const F* f)
+            : t_(t, t + n), f_(f, f + n)
+        { }
+        curve(const std::vector<T>& t, const std::vector<F>& f)
+            : t_(t), f_(f)
+        {
+            ensure (t_.size() == f_.size());
+        }
+        curve& push_back(const T& t, const F& f)
+        {
+            ensure (t > t_.back());
+
+            t_.push_back(t);
+            f_.push_back(f);
+
+            return *this;
+        }
+        curve& push_back(const std::pair<T,F>& p)
+        {
+            return push_back(p.first, p.second);
+        }
+    private:
+        size_t _size() const override
+        {
+            return t_.size();
+        }
+        const T* _time() const override
+        {
+            return t_.data();
+        }
+        const F* _rate() const override
+        {
+            return f_.data();
+        }
+    };
+
 	// value of instrument having cash flow c[i] at time u[i]
 	template<class T, class F>
-	inline F present_value(size_t m, const T* u, const F* c, size_t n, const T* t, const F* f, const F& _f = std::numeric_limits<F>::quiet_NaN())
+	inline F present_value(size_t m, const T* u, const F* c, size_t n, const T* t, const F* f, const F& _f = qNaN<F>())
 	{
 		F p{0};
 
@@ -105,7 +179,7 @@ namespace pwflat {
 
 	// derivative of present value wrt parallel shift of forward curve
 	template<class T, class F>
-	inline F duration(size_t m, const T* u, const F* c, size_t n, const T* t, const F* f, const F& _f = std::numeric_limits<F>::quiet_NaN())
+	inline F duration(size_t m, const T* u, const F* c, size_t n, const T* t, const F* f, const F& _f = qNaN())
 	{
 		F d{0};
 
@@ -118,7 +192,7 @@ namespace pwflat {
 
 	// derivative of present value wrt parallel shift of forward curve after last curve time
 	template<class T, class F>
-	inline F duration_extrapolated(size_t m, const T* u, const F* c, size_t n, const T* t, const F* f, const F& _f = std::numeric_limits<F>::quiet_NaN())
+	inline F duration_extrapolated(size_t m, const T* u, const F* c, size_t n, const T* t, const F* f, const F& _f = qNaN())
 	{
 		F d{0};
 
@@ -132,6 +206,7 @@ namespace pwflat {
 		return d;
 	}
 } // pwflat
+
 } // fms
 
 #ifdef _DEBUG
