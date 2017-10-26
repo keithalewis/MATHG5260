@@ -1,4 +1,5 @@
 // fms_date.h - Date routines based on https://github.com/HowardHinnant/date
+// See also: https://fmsdatetime.codeplex.com/SourceControl/latest#trunk/datetime.h
 // The class year_month_day has members year, month, day.
 // The class sys_days is a count of days from an epoch/time_point
 #pragma once
@@ -39,6 +40,24 @@ namespace date {
     inline auto dcf<actual_365>(::date::year_month_day t0, ::date::year_month_day t1)
     {
         return (::date::sys_days(t1) - ::date::sys_days(t0)).count()/365.;
+    }
+    enum DAY_COUNT_BASIS {
+        DCB_30_360,
+        DCB_ACTUAL_360,
+        DCB_ACTUAL_365,
+    };
+    inline double day_count_fraction(DAY_COUNT_BASIS dcb, ::date::year_month_day t0, ::date::year_month_day t1)
+    {
+        switch (dcb) {
+        case DCB_30_360:
+            return dcf<_30_360>(t0, t1);
+        case DCB_ACTUAL_360:
+            return dcf<actual_360>(t0, t1);
+        case DCB_ACTUAL_365:
+            return dcf<actual_365>(t0, t1);
+        }
+
+        return std::numeric_limits<double>::quiet_NaN();
     }
 
     inline bool is_business_day(::date::year_month_day t/*, calendar c*/)
