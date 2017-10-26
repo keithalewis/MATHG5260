@@ -1,9 +1,18 @@
 // xll_fixed_income.cpp - Fixed Income instruments
 #include "fms_fixed_income.h"
+#include "fms_fixed_income_cash_deposit.h"
 #include "G5260.h"
 
 using namespace fms;
 using namespace xll;
+
+#ifdef _DEBUG
+
+xll::test xll_test_fixed_income_intrument([](){
+    fixed_income::test_fms_fixed_income_instrument();
+    fixed_income::test_fms_fixed_income_cash_deposit();
+});
+#endif // _DEBUG
 
 #define PREFIX L"FIXED.INCOME."
 
@@ -15,7 +24,6 @@ static AddIn xai_fixed_income_instrument(
     .Category(CATEGORY)
     .FunctionHelp(L"Return a handle to a fixed income instrument.")
 );
-//!!! Implement xll_fixed_income_instrument based on xll_pwflat_curve
 HANDLEX WINAPI xll_fixed_income_instrument(_FP12* pt, _FP12* pf)
 {
 #pragma XLLEXPORT
@@ -23,6 +31,8 @@ HANDLEX WINAPI xll_fixed_income_instrument(_FP12* pt, _FP12* pf)
 
     try {
         ensure (size(*pt) == size(*pf));
+        xll::handle<fixed_income::instrument<>> h_(new fixed_income::instrument<>(size(*pt), pt->array, pf->array));
+        h = h_.get();
     }
     catch(const std::exception& ex) {
         XLL_ERROR(ex.what());
@@ -33,7 +43,7 @@ HANDLEX WINAPI xll_fixed_income_instrument(_FP12* pt, _FP12* pf)
 
 static AddIn xai_fixed_income_instrument_size(
     Function(XLL_DOUBLE, L"?xll_fixed_income_instrument_size", PREFIX L"INSTRUMENT.SIZE")
-    .Arg(XLL_HANDLE, L"handle", L"is handle to an instrument.")
+    .Arg(XLL_HANDLE, L"handle", L"is a handle to an instrument.")
     .Category(CATEGORY)
     .FunctionHelp(L"Return the number of times/cash flows of a fixed income instrument.")
 );
@@ -43,7 +53,7 @@ double WINAPI xll_fixed_income_instrument_size(HANDLEX h)
     double size;
 
     try {
-        xll::handle<fixed_income::interface<>> h_(h);
+        xll::handle<fixed_income::instrument<>> h_(h);
         ensure (h_);
         size = h_->size();
     }
@@ -67,7 +77,7 @@ _FP12* WINAPI xll_fixed_income_instrument_time(HANDLEX h)
     static xll::FP12 t;
 
     try {
-        xll::handle<fixed_income::interface<>> h_(h);
+        xll::handle<fixed_income::instrument<>> h_(h);
         ensure (h_);
         t.resize(1, h_->size());
         std::copy(h_->time(), h_->time() + h_->size(), begin(t));
@@ -81,6 +91,28 @@ _FP12* WINAPI xll_fixed_income_instrument_time(HANDLEX h)
     return t.get();
 }
 
-//!!! Implement xll_fixed_income_instrument_cash
-//!!! You will be graded on your copy-pasta skills.
-//!!! Copy, paste, and substitute 'time' for 'cash' with appropriate fixups.
+static AddIn xai_fixed_income_instrument_cash(
+    Function(XLL_FP, L"?xll_fixed_income_instrument_cash", PREFIX L"INSTRUMENT.CASH")
+    .Arg(XLL_HANDLE, L"handle", L"is handle to an instrument.")
+    .Category(CATEGORY)
+    .FunctionHelp(L"Return a one row array of cash flows of a fixed income instrument.")
+);
+_FP12* WINAPI xll_fixed_income_instrument_cash(HANDLEX h)
+{
+#pragma XLLEXPORT
+    static xll::FP12 c;
+
+    try {
+        xll::handle<fixed_income::instrument<>> h_(h);
+        ensure (h_);
+        c.resize(1, h_->size());
+        std::copy(h_->cash(), h_->cash() + h_->size(), begin(c));
+    }
+    catch (const std::exception& ex) {
+        XLL_ERROR(ex.what());
+        
+        return 0;
+    }
+
+    return c.get();
+}

@@ -165,6 +165,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="fms_fixed_income_cash_deposit.h" />
     <ClInclude Include="fms_black.h" />
     <ClInclude Include="fms_bsm.h" />
     <ClInclude Include="ensure.h" />
