@@ -6,7 +6,7 @@
 
 #pragma once
 #include <vector>
-#include "fms_date.h"
+#include "../date/include/date/date.h"
 #include "ensure.h"
 
 namespace fms {
@@ -80,8 +80,10 @@ namespace fixed_income {
 		instrument& operator=(const instrument&) = default;
 		~instrument()
         { }
-		virtual instrument& fix(::date::year_month_day, C, fms::date::DAY_COUNT_BASIS, fms::date::BUSINESS_DAY_ROLL)
-		{ }
+		virtual instrument& fix(::date::year_month_day, C)
+		{
+            return *this;
+        }
     private:
         size_t _size() const override
         {

@@ -7,7 +7,23 @@ using namespace date;
 using namespace fms::date;
 using namespace xll;
 
-static constexpr year_month_day excel_epoch = jan/0/1900;
+#define _T(x) L##x
+
+// Day counts.
+//XLL_ENUM_DOC(DCB_ACTUAL_YEARS, DCB_ACTUAL_YEARS, CATEGORY, _T("Time in years between dates."), _T(""))
+//XLL_ENUM_DOC(DCB_30U_360, DCB_30U_360, CATEGORY, _T("Day count with 30 days per month and 360 days per year."), _T(""))
+//XLL_ENU_DOC(DCB_30E_360, DCB_30E_360, CATEGORY, _T("European day count with 30 days per month and 360 days per year."), _T(""))
+XLL_ENUM_DOC(DCB_30_360, DCB_30U_360, CATEGORY, _T("Day count with 30 days per month and 360 days per year."), _T(""))
+XLL_ENUM_DOC(DCB_ACTUAL_360, DCB_ACTUAL_360, CATEGORY, _T("Day count is number of days divided by 360."), _T(""))
+XLL_ENUM_DOC(DCB_ACTUAL_365, DCB_ACTUAL_365, CATEGORY, _T("Day count is number of days divided by 365."), _T(""))
+//XLL_ENUM_DOC(DCB_ACTUAL_ACTUAL_ISDA, DCB_ACTUAL_ACTUAL_ISDA, CATEGORY, _T("Day count is number of days divided by 365, or 366 for leap years")
+
+// Rolling conventions.
+//XLL_ENUM_DOC(ROLL_NONE, ROLL_NONE, CATEGORY, _T("No roll convention."), _T(""))
+XLL_ENUM_DOC(ROLL_FOLLOWING_BUSINESS, ROLL_FOLLOWING_BUSINESS, CATEGORY, _T("The following business day."), _T(""))
+//XLL_ENUM_DOC(ROLL_PREVIOUS_BUSINESS, ROLL_PREVIOUS_BUSINESS, CATEGORY, _T("The previous business day."), _T(""))
+XLL_ENUM_DOC(ROLL_MODIFIED_FOLLOWING, ROLL_MODIFIED_FOLLOWING, CATEGORY, _T("The earlier of following and last business day of month."), _T(""))
+//XLL_ENUM_DOC(ROLL_MODIFIED_PREVIOUS, ROLL_MODIFIED_PREVIOUS, CATEGORY, _T("The later of the previous and first business day of month."), _T(""))
 
 static AddIn xai_date(
     Function(XLL_DOUBLE, L"?xll_date", L"XLL.DATE")
@@ -22,8 +38,24 @@ double WINAPI xll_date(short y, unsigned short m, unsigned short d)
 #pragma XLLEXPORT
     year_month_day ymd(year{y}, month{m}, day{d});
 
-    return 1 + duration<double,days::period>(sys_days(ymd) - sys_days(excel_epoch)).count();
+    return excel_date(ymd);
+}
 
+static AddIn xai_yyyymmdd(
+    Function(XLL_DOUBLE, L"?xll_yyyymmdd", L"XLL.YYYYMMDD")
+    .Arg(XLL_DOUBLE, L"date", L"is an Excel date")
+    .Category(CATEGORY)
+    .FunctionHelp(L"Convert date to yyyymmdd integer.")
+);
+double WINAPI xll_yyyymmdd(double date)
+{
+#pragma XLLEXPORT
+    year_month_day ymd = excel_date(date);
+    int y = static_cast<int>(ymd.year());
+    unsigned m = static_cast<unsigned>(ymd.month());
+    unsigned d = static_cast<unsigned>(ymd.day());
+
+    return 10000*y + 100*m + d;
 }
 
 static AddIn xai_time(
@@ -42,17 +74,6 @@ double WINAPI xll_time(short h, short m, short s)
 
 #ifdef _DEBUG
 
-double test_day_count()
-{
-    year_month_day t0 = 2017_y/oct/1;
-    days tplus{2};
-    auto t1 = increment(t0, tplus);
-    auto dt = sys_days(t1) - sys_days(t0); 
-    auto x = duration<double,years::period>(dt);
-
-    return x.count();
-}
-
 xll::test test_xll_date([]() {
     year_month_day t0 = 2017_y/oct/1;
     year_month_day t1 = 2018_y/dec/4;
@@ -60,9 +81,6 @@ xll::test test_xll_date([]() {
     ensure (dcf<_30_360>(t0, t1) == 1 + 2/30. + 3/360.);
     ensure (dcf<actual_360>(t0, t1) == 429/360.);
     ensure (dcf<actual_365>(t0, t1) == 429/365.);
-
-    double dt;
-    dt = test_day_count();
 });
 
 #endif // _DEBUG

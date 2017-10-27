@@ -121,17 +121,20 @@ static AddIn xai_fixed_income_cash_deposit(
 	Function(XLL_HANDLE, L"?xll_fixed_income_cash_deposit", PREFIX L"CASH.DEPOSIT")
 	.Arg(XLL_SHORT, L"settlement", L"is the number of days until the cash deposit settles.")
 	.Arg(XLL_SHORT, L"tenor", L"is the number of months until maturity.")
+    .Arg(XLL_SHORT, L"dcb", L"is the day count basis.")
+    .Arg(XLL_SHORT, L"roll", L"is the business day roll convention.")
 	.Uncalced()
 	.Category(CATEGORY)
 	.FunctionHelp(L"Return a handle to a cash deposit.")
 );
-HANDLEX WINAPI xll_fixed_income_cash_deposit(short settlement, short tenor)
+HANDLEX WINAPI xll_fixed_income_cash_deposit(short settlement, short tenor,
+    fms::date::DAY_COUNT_BASIS dcb, fms::date::BUSINESS_DAY_ROLL roll)
 {
 #pragma XLLEXPORT
 	handlex h;
 
 	try {
-		xll::handle<fixed_income::instrument<>> h_(new fixed_income::cash_deposit<>(::date::days{ settlement }, ::date::months{ tenor }));
+		xll::handle<fixed_income::instrument<>> h_(new fixed_income::cash_deposit<>(::date::days{ settlement }, ::date::months{ tenor }, dcb, roll));
 		h = h_.get();
 	}
 	catch (const std::exception& ex) {
@@ -152,19 +155,15 @@ static AddIn xai_fixed_income_instrument_cash_deposit_fix(
 HANDLEX WINAPI xll_fixed_income_instrument_cash_deposit_fix(HANDLEX h, double valuation, double rate)
 {
 #pragma XLLEXPORT
-	double size;
-
 	try {
 		xll::handle<fixed_income::instrument<>> h_(h);
 		ensure(h_);
-		valuation = valuation;
-		//::date::year y((int)Excel(xlfYear, OPER(valuation));
-		::date::year_month_day val(::date::year{ 2017 }, ::date::month{ 10 }, ::date::day{ 26 });
-		h_->fix(val, rate, fms::date::DCB_ACTUAL_360, fms::date::ROLL_MODIFIED_FOLLOWING);
+		h_->fix(fms::date::excel_date(valuation), rate);
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
-		size = std::numeric_limits<double>::quiet_NaN();
+
+        return handlex{};
 	}
 
 	return h;

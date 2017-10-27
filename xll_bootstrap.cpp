@@ -1,6 +1,6 @@
 // xll_bootstrap.cpp - Bootstrap a curve.
 #include "fms_bootstrap.h"
-#include "../xll12/xll/xll.h"
+#include "G5260.h"
 
 using namespace xll;
 using namespace fms;
@@ -11,7 +11,7 @@ AddIn xai_xll_bootstrap(
     .Arg(XLL_FP, L"instrument", L"is a two row array of times and cash flows")
     .Arg(XLL_FP, L"curve", L"is a two row array of times and forwards")
     .Arg(XLL_DOUBLE, L"initial", L"is an initial guess at the bootstrap value.")
-    .Category(L"FMS")
+    .Category(CATEGORY)
     .FunctionHelp(L"Bootstrap a curve")
 );
 double WINAPI xll_pwflat_bootstrap(double p, _FP12* pi, _FP12* pc, double f)

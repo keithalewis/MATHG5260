@@ -13,6 +13,11 @@ namespace date {
     class actual_360;
     class actual_365;
     //...
+    enum DAY_COUNT_BASIS {
+        DCB_30_360,
+        DCB_ACTUAL_360,
+        DCB_ACTUAL_365,
+    };
 
     // Day count fraction from t0 to t1 using day count basis.
     template<class DCB>
@@ -41,11 +46,6 @@ namespace date {
     {
         return (::date::sys_days(t1) - ::date::sys_days(t0)).count()/365.;
     }
-    enum DAY_COUNT_BASIS {
-        DCB_30_360,
-        DCB_ACTUAL_360,
-        DCB_ACTUAL_365,
-    };
     inline double day_count_fraction(DAY_COUNT_BASIS dcb, ::date::year_month_day t0, ::date::year_month_day t1)
     {
         switch (dcb) {
@@ -76,6 +76,11 @@ namespace date {
     // business day conventions
     class following_business;
     class modified_following;
+    // ...
+	enum BUSINESS_DAY_ROLL {
+		ROLL_FOLLOWING_BUSINESS,
+		ROLL_MODIFIED_FOLLOWING,
+	};
 
     template<class ROLL>
     inline ::date::year_month_day adjust(::date::year_month_day t/*, calendar c*/);
@@ -101,10 +106,34 @@ namespace date {
 
         return t;
     }
-	enum BUSINESS_DAY_ROLL {
-		ROLL_FOLLOWING_BUSINESS,
-		ROLL_MODIFIED_FOLLOWING,
-	};
+    inline ::date::year_month_day business_day_adjust(BUSINESS_DAY_ROLL roll, ::date::year_month_day t/*, calendar c*/)
+    {
+        switch (roll) {
+        case ROLL_FOLLOWING_BUSINESS:
+            return adjust<following_business>(t);
+        case ROLL_MODIFIED_FOLLOWING:
+            return adjust<modified_following>(t);
+        }
+        
+        return ::date::year_month_day{};
+    }
+
+    // Convert Excel Julian date to year_month_day
+    inline ::date::year_month_day excel_date(double date)
+    {
+        static constexpr ::date::year_month_day excel_epoch = ::date::jan/0/1900;
+        static constexpr ::date::sys_days epoch(excel_epoch);
+        
+        return ::date::year_month_day(epoch + ::date::days(static_cast<int>(date)));
+    }
+    // Convert year_month_day to Excel Julian date
+    inline double excel_date(::date::year_month_day date)
+    {
+        static constexpr ::date::year_month_day excel_epoch = ::date::jan/0/1900;
+        static constexpr ::date::sys_days epoch(excel_epoch);
+        
+        return std::chrono::duration<double,::date::days::period>(::date::sys_days(date) - epoch).count();
+    }
 
     // weekday_indexed
 } // date
