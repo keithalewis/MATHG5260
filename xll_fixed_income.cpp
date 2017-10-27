@@ -24,14 +24,14 @@ static AddIn xai_fixed_income_instrument(
     .Category(CATEGORY)
     .FunctionHelp(L"Return a handle to a fixed income instrument.")
 );
-HANDLEX WINAPI xll_fixed_income_instrument(_FP12* pt, _FP12* pf)
+HANDLEX WINAPI xll_fixed_income_instrument(_FP12* pu, _FP12* pc)
 {
 #pragma XLLEXPORT
     handlex h;
 
     try {
-        ensure (size(*pt) == size(*pf));
-        xll::handle<fixed_income::instrument<>> h_(new fixed_income::instrument<>(size(*pt), pt->array, pf->array));
+        ensure (size(*pu) == size(*pc));
+        xll::handle<fixed_income::instrument<>> h_(new fixed_income::instrument<>(size(*pu), pu->array, pc->array));
         h = h_.get();
     }
     catch(const std::exception& ex) {
@@ -55,7 +55,7 @@ double WINAPI xll_fixed_income_instrument_size(HANDLEX h)
     try {
         xll::handle<fixed_income::instrument<>> h_(h);
         ensure (h_);
-        size = h_->size();
+        size = static_cast<double>(h_->size());
     }
     catch (const std::exception& ex) {
         XLL_ERROR(ex.what());
@@ -79,7 +79,7 @@ _FP12* WINAPI xll_fixed_income_instrument_time(HANDLEX h)
     try {
         xll::handle<fixed_income::instrument<>> h_(h);
         ensure (h_);
-        t.resize(1, h_->size());
+        t.resize(1, static_cast<COL>(h_->size()));
         std::copy(h_->time(), h_->time() + h_->size(), begin(t));
     }
     catch (const std::exception& ex) {
@@ -105,7 +105,7 @@ _FP12* WINAPI xll_fixed_income_instrument_cash(HANDLEX h)
     try {
         xll::handle<fixed_income::instrument<>> h_(h);
         ensure (h_);
-        c.resize(1, h_->size());
+        c.resize(1, static_cast<COL>(h_->size()));
         std::copy(h_->cash(), h_->cash() + h_->size(), begin(c));
     }
     catch (const std::exception& ex) {
@@ -115,4 +115,57 @@ _FP12* WINAPI xll_fixed_income_instrument_cash(HANDLEX h)
     }
 
     return c.get();
+}
+
+static AddIn xai_fixed_income_cash_deposit(
+	Function(XLL_HANDLE, L"?xll_fixed_income_cash_deposit", PREFIX L"CASH.DEPOSIT")
+	.Arg(XLL_SHORT, L"settlement", L"is the number of days until the cash deposit settles.")
+	.Arg(XLL_SHORT, L"tenor", L"is the number of months until maturity.")
+	.Uncalced()
+	.Category(CATEGORY)
+	.FunctionHelp(L"Return a handle to a cash deposit.")
+);
+HANDLEX WINAPI xll_fixed_income_cash_deposit(short settlement, short tenor)
+{
+#pragma XLLEXPORT
+	handlex h;
+
+	try {
+		xll::handle<fixed_income::instrument<>> h_(new fixed_income::cash_deposit<>(::date::days{ settlement }, ::date::months{ tenor }));
+		h = h_.get();
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+	}
+
+	return h;
+}
+
+static AddIn xai_fixed_income_instrument_cash_deposit_fix(
+	Function(XLL_DOUBLE, L"?xll_fixed_income_instrument_cash_deposit_fix", PREFIX L"INSTRUMENT.CASH.DEPOSIT.FIX")
+	.Arg(XLL_HANDLE, L"handle", L"is a handle to a cash deposit.")
+	.Arg(XLL_DOUBLE, L"valuation", L"date at which rate is quoted.")
+	.Arg(XLL_DOUBLE, L"rate", L"is the cash deposit rate on valuation date.")
+	.Category(CATEGORY)
+	.FunctionHelp(L"Fix times and cash flows of the cash deposit.")
+);
+HANDLEX WINAPI xll_fixed_income_instrument_cash_deposit_fix(HANDLEX h, double valuation, double rate)
+{
+#pragma XLLEXPORT
+	double size;
+
+	try {
+		xll::handle<fixed_income::instrument<>> h_(h);
+		ensure(h_);
+		valuation = valuation;
+		//::date::year y((int)Excel(xlfYear, OPER(valuation));
+		::date::year_month_day val(::date::year{ 2017 }, ::date::month{ 10 }, ::date::day{ 26 });
+		h_->fix(val, rate, fms::date::DCB_ACTUAL_360, fms::date::ROLL_MODIFIED_FOLLOWING);
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+		size = std::numeric_limits<double>::quiet_NaN();
+	}
+
+	return h;
 }

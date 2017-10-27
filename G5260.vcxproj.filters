@@ -54,6 +54,9 @@
     <ClInclude Include="fms_fixed_income_cash_deposit.h">
       <Filter>fms</Filter>
     </ClInclude>
+    <ClInclude Include="fms_fixed_income_forward_rate_agreement.h">
+      <Filter>fms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="unique.cpp">

@@ -101,6 +101,10 @@ namespace date {
 
         return t;
     }
+	enum BUSINESS_DAY_ROLL {
+		ROLL_FOLLOWING_BUSINESS,
+		ROLL_MODIFIED_FOLLOWING,
+	};
 
     // weekday_indexed
 } // date

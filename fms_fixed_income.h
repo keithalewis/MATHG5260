@@ -5,8 +5,8 @@
 // date is the negative of the price.
 
 #pragma once
-#include <chrono>
 #include <vector>
+#include "fms_date.h"
 #include "ensure.h"
 
 namespace fms {
@@ -76,8 +76,12 @@ namespace fixed_income {
         {
             ensure (u_.size()  == c_.size());
         }
-        ~instrument()
+		instrument(const instrument&) = default;
+		instrument& operator=(const instrument&) = default;
+		~instrument()
         { }
+		virtual instrument& fix(::date::year_month_day, C, fms::date::DAY_COUNT_BASIS, fms::date::BUSINESS_DAY_ROLL)
+		{ }
     private:
         size_t _size() const override
         {

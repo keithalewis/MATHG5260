@@ -23,7 +23,7 @@ namespace fixed_income {
 
             auto val = ::date::sys_days(valuation);
 
-            auto set = fms::date::adjust<ROLL>(fms::date::increment(valuation, settlement));
+            auto set = fms::date::adjust<ROLL>(::date::year_month_day(val + settlement));
             auto dset = ::date::sys_days(set) - val;
             U u0 = std::chrono::duration<U,::date::years::period>(dset).count();
             time(0) = u0;
@@ -37,7 +37,11 @@ namespace fixed_income {
      
             return *this;
         }
-    
+		cash_deposit& fix(::date::year_month_day valuation, C f, fms::date::DAY_COUNT_BASIS, fms::date::BUSINESS_DAY_ROLL) override
+		{
+			return fix<fms::date::actual_360, fms::date::modified_following>(valuation, r);
+		}
+
     };
 #ifdef _DEBUG
     inline void test_fms_fixed_income_cash_deposit()
