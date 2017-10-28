@@ -1,6 +1,6 @@
 // xllblack.cpp - Fischer Black forward value
 #include "fms_black.h"
-#include "xll/xll.h"
+#include "G5260.h"
 
 using namespace xll;
 using namespace fms;
@@ -11,7 +11,7 @@ AddIn xai_black_put(
     .Arg(XLL_DOUBLE, L"sigma", L"is the volatility.")
     .Arg(XLL_DOUBLE, L"k", L"is strike.")
     .Arg(XLL_DOUBLE, L"t", L"is the expiration in years.")
-    .Category(L"FMS")
+    .Category(CATEGORY)
     .FunctionHelp(L"Forward value of a put option.")
 );
 double WINAPI xll_black_put(double f, double sigma, double k, double t)
@@ -43,7 +43,7 @@ AddIn xai_black_put_vega(
     .Arg(XLL_DOUBLE, L"sigma", L"is the volatility.")
     .Arg(XLL_DOUBLE, L"k", L"is strike.")
     .Arg(XLL_DOUBLE, L"t", L"is the expiration in years.")
-    .Category(L"FMS")
+    .Category(CATEGORY)
     .FunctionHelp(L"Derivative with respect to volaility of the forward value of a put option.")
 );
 double WINAPI xll_black_put_vega(double f, double sigma, double k, double t)
@@ -75,7 +75,7 @@ AddIn xai_black_put_implied_volatility(
     .Arg(XLL_DOUBLE, L"p", L"is the put price.")
     .Arg(XLL_DOUBLE, L"k", L"is strike.")
     .Arg(XLL_DOUBLE, L"t", L"is the expiration in years.")
-    .Category(L"FMS")
+    .Category(CATEGORY)
     .FunctionHelp(L"Return the volatility that recovers the given put price.")
 );
 double WINAPI xll_black_put_implied_volatility(double f, double p, double k, double t)

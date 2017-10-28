@@ -16,9 +16,6 @@
     <Filter Include="fms">
       <UniqueIdentifier>{ad957250-0f57-40ad-b851-1cdb76a7c788}</UniqueIdentifier>
     </Filter>
-    <Filter Include="xll">
-      <UniqueIdentifier>{19c38cba-159d-4ef3-b837-13ea3c1f3bae}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="G5260.h">
@@ -51,6 +48,12 @@
     <ClInclude Include="fms_fixed_income.h">
       <Filter>fms</Filter>
     </ClInclude>
+    <ClInclude Include="fms_fixed_income_cash_deposit.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="fms_fixed_income_forward_rate_agreement.h">
+      <Filter>fms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="unique.cpp">
@@ -58,15 +61,6 @@
     </ClCompile>
     <ClCompile Include="sort.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="xll_black.cpp">
-      <Filter>xll</Filter>
-    </ClCompile>
-    <ClCompile Include="xll_prob.cpp">
-      <Filter>xll</Filter>
-    </ClCompile>
-    <ClCompile Include="xll_bootstrap.cpp">
-      <Filter>xll</Filter>
     </ClCompile>
     <ClCompile Include="xll_pwflat.cpp">
       <Filter>Source Files</Filter>
@@ -77,9 +71,17 @@
     <ClCompile Include="xll_fixed_income.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="xll_black.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xll_bootstrap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xll_prob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
-    <None Include="hw2.xlsx" />
   </ItemGroup>
 </Project>

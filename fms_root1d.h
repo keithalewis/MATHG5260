@@ -12,6 +12,7 @@ namespace fms {
         {
             return (x0 + x1)/2;
         }
+
         // y = y0 + (x - x0)(y1 - y0)/(x1 - x0) = 0
         // x = x0 - y0 (x1 - x0)/(y1 - y0)
         //   = x0(y1 - y0)/(y1 - y0) - y0 (x1 - x0)/(y1 - y0)
@@ -23,6 +24,7 @@ namespace fms {
 
             return (x0*y1 - y0*x1)/(y1 - y0);
         }
+
         // y = y0 + (x - x0)dy = 0
         // x = x0 - y0/dy
         template<class X, class Y>
@@ -38,11 +40,29 @@ namespace fms {
             X x_ = newton(x, f(x), df(x));
 
             while (abs(fms::ulp(x_, x)) >= ulp) {
-                if (iter-- == 0) {
-                    return std::numeric_limits<X>::quiet_NaN();
-                }
-               x = x_;
-               x_ = newton(x, f(x), df(x));
+                ensure (iter-- > 0);
+                x = x_;
+                x_ = newton(x, f(x), df(x));
+            }
+            
+            return x_;
+        }
+
+        template<class X, class Y>
+        inline X secant_solve(X x0, X x1, const std::function<Y(X)>& f, 
+            int iter = 100, long long ulp = 10)
+        {
+            Y y0 = f(x0);
+            Y y1 = f(x1);
+            X x_ = secant(x0, y0, x1, y1);
+
+            while (abs(fms::ulp(x_, x1)) >= ulp) {
+                ensure (iter-- > 0);
+                x0 = x1;
+                y0 = y1;
+                x1 = x_
+                y1 = f(x_);
+                x_ = secant(x0, y0, x1, y1);
             }
             
             return x_;

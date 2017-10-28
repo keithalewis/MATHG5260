@@ -115,8 +115,10 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;_DEBUG;G5260_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <AdditionalOptions>/J %(AdditionalOptions)</AdditionalOptions>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -165,12 +167,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="fms_fixed_income_cash_deposit.h" />
     <ClInclude Include="fms_black.h" />
     <ClInclude Include="fms_bsm.h" />
     <ClInclude Include="ensure.h" />
     <ClInclude Include="fms_bootstrap.h" />
     <ClInclude Include="fms_date.h" />
     <ClInclude Include="fms_fixed_income.h" />
+    <ClInclude Include="fms_fixed_income_forward_rate_agreement.h" />
     <ClInclude Include="fms_pwflat.h" />
     <ClInclude Include="G5260.h" />
     <ClInclude Include="fms_prob.h" />
@@ -192,7 +196,6 @@
     <ClCompile Include="xll_pwflat.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="hw2.xlsx" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
