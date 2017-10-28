@@ -192,7 +192,7 @@ namespace pwflat {
 
 	// derivative of present value wrt parallel shift of forward curve after last curve time
 	template<class T, class F>
-	inline F duration_extrapolated(size_t m, const T* u, const F* c, size_t n, const T* t, const F* f, const F& _f = qNaN())
+	inline F partial_duration(size_t m, const T* u, const F* c, size_t n, const T* t, const F* f, const F& _f = qNaN())
 	{
 		F d{0};
 

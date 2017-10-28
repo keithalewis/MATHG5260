@@ -3,6 +3,7 @@
 // The class year_month_day has members year, month, day.
 // The class sys_days is a count of days from an epoch/time_point
 #pragma once
+#include <functional>
 #include "../date/include/date/date.h"
 
 namespace fms {
@@ -60,17 +61,20 @@ namespace date {
         return std::numeric_limits<double>::quiet_NaN();
     }
 
-    inline bool is_business_day(::date::year_month_day t/*, calendar c*/)
-    {
-        auto dow = ::date::weekday(t);
+    using calendar = std::function<bool(::date::year_month_day)>;
+    static calendar holiday_none = [](::date::year_month_day) { return false; };
 
-        return dow == ::date::sat || dow == ::date::sun;
+    inline bool is_business_day(::date::year_month_day ymd, const calendar& holiday)
+    {
+        auto dow = ::date::weekday(ymd);
+
+        return dow != ::date::sat && dow != ::date::sun && !holiday(ymd);
     }
 
     // Relatively expensive operation not implmented by date library.
-    inline ::date::year_month_day increment(::date::year_month_day t, ::date::days d)
+    inline ::date::year_month_day increment(::date::year_month_day ymd, ::date::days d)
     {
-        return ::date::year_month_day(::date::sys_days(t) + d);
+        return ::date::year_month_day(::date::sys_days(ymd) + d);
     }
 
     // business day conventions
@@ -83,36 +87,36 @@ namespace date {
 	};
 
     template<class ROLL>
-    inline ::date::year_month_day adjust(::date::year_month_day t/*, calendar c*/);
+    inline ::date::year_month_day adjust(::date::year_month_day ymd, const calendar& holiday);
 
     // Move forward to next business day.
     template<>
-    inline ::date::year_month_day adjust<following_business>(::date::year_month_day t/*, calendar c*/)
+    inline ::date::year_month_day adjust<following_business>(::date::year_month_day ymd, const calendar& holiday)
     {
-        while (!is_business_day(t)/*, c*/)
-            t = increment(t, ::date::days{1});
+        while (!is_business_day(ymd, holiday))
+            ymd = increment(ymd, ::date::days{1});
 
-        return t;
+        return ymd;
     }
     // Move forward to next business day unless it is in the next month.
     template<>
-    inline ::date::year_month_day adjust<modified_following>(::date::year_month_day t/*, calendar c*/)
+    inline ::date::year_month_day adjust<modified_following>(::date::year_month_day ymd, const calendar& holiday)
     {
-        auto m = t.month();
-        while (!is_business_day(t/*, c*/) && m == t.month())
-            t = increment(t, ::date::days{1});
-        while (!is_business_day(t/*, c*/))
-            t = increment(t, ::date::days{-1});
+        auto m = ymd.month();
+        while (!is_business_day(ymd, holiday) && m == ymd.month())
+            ymd = increment(ymd, ::date::days{1});
+        while (!is_business_day(ymd, holiday))
+            ymd = increment(ymd, ::date::days{-1});
 
-        return t;
+        return ymd;
     }
-    inline ::date::year_month_day business_day_adjust(BUSINESS_DAY_ROLL roll, ::date::year_month_day t/*, calendar c*/)
+    inline ::date::year_month_day business_day_adjust(BUSINESS_DAY_ROLL roll, ::date::year_month_day ymd, const calendar& holiday)
     {
         switch (roll) {
         case ROLL_FOLLOWING_BUSINESS:
-            return adjust<following_business>(t);
+            return adjust<following_business>(ymd, holiday);
         case ROLL_MODIFIED_FOLLOWING:
-            return adjust<modified_following>(t);
+            return adjust<modified_following>(ymd, holiday);
         }
         
         return ::date::year_month_day{};
