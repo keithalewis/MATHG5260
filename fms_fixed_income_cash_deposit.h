@@ -53,9 +53,10 @@ namespace fixed_income {
         cash_deposit<> cd(::date::days{2}, ::date::months{3}, date::DCB_ACTUAL_365, date::ROLL_FOLLOWING_BUSINESS);
         ensure (cd.size() == 2);
 
-        // ymd + 2 is a Saturday
         year_month_day ymd(year{2017}, month{10}, day{26});
         cd.fix(ymd, 0.01);
+
+        // Indepenedent "by hand" calculation.
 
         // ymd + 2 days is a Saturday
         auto set = year_month_day(year{2017}, month{10}, day{30});
@@ -63,7 +64,6 @@ namespace fixed_income {
         auto mat = year_month_day(year{2018}, month{1}, day{30});
         auto dcf = 92/365.;
 
-        // Indepenedent "by hand" calculation.
         auto dset = ::date::sys_days(set) - ::date::sys_days(ymd);
         auto dmat = ::date::sys_days(mat) - ::date::sys_days(ymd);
         auto u0 = std::chrono::duration<double,::date::years::period>(dset);

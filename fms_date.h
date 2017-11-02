@@ -9,6 +9,17 @@
 namespace fms {
 namespace date {
 
+    enum PAYMENT_FREQUENCY {
+	    FREQ_NO_FREQUENCY = 0, FREQ_NONE = 0,
+	    FREQ_ANNUALLY     = 1,
+	    FREQ_SEMIANNUALLY = 2,
+	    FREQ_QUARTERLY    = 4,
+	    FREQ_MONTHLY      = 12,
+	    FREQ_BIWEEKLY     = 26,
+	    FREQ_WEEKLY       = 52,
+	    FREQ_MAX
+    };
+
     // day count basis
     class _30_360;
     class actual_360;

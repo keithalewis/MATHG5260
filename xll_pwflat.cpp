@@ -22,7 +22,7 @@ HANDLEX WINAPI xll_pwflat_curve(const _FP12* pt, const _FP12* pr)
         ensure (size(*pt) == size(*pr));
         ensure (pwflat::monotonic(begin(*pt), end(*pt)));
 
-        xll::handle<pwflat::interface<>> h_(new pwflat::curve<>(size(*pt), pt->array, pr->array));
+        xll::handle<pwflat::curve<>> h_(new pwflat::curve<>(size(*pt), pt->array, pr->array));
         h = h_.get();
     }
     catch (const std::exception& ex) {
@@ -46,7 +46,7 @@ _FP12* WINAPI xll_pwflat_value(HANDLEX h, const _FP12* pt, double _f)
     static xll::FP12 f;
 
     try {
-        xll::handle<pwflat::interface<>> h_(h);
+        xll::handle<pwflat::curve<>> h_(h);
         ensure (h_);
         auto n = size(*pt);
         if (pt->rows == 1)
