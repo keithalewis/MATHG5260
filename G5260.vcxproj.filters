@@ -57,10 +57,10 @@
     <ClInclude Include="fms_fixed_income_swap.h">
       <Filter>fms</Filter>
     </ClInclude>
-    <ClInclude Include="bell.h">
+    <ClInclude Include="fms_bell.h">
       <Filter>fms</Filter>
     </ClInclude>
-    <ClInclude Include="hermite.h">
+    <ClInclude Include="fms_hermite.h">
       <Filter>fms</Filter>
     </ClInclude>
   </ItemGroup>
@@ -90,6 +90,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="xll_range.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xll_njr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

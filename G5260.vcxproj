@@ -167,7 +167,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="bell.h" />
+    <ClInclude Include="fms_bell.h" />
     <ClInclude Include="fms_fixed_income_cash_deposit.h" />
     <ClInclude Include="fms_black.h" />
     <ClInclude Include="fms_bsm.h" />
@@ -181,7 +181,7 @@
     <ClInclude Include="G5260.h" />
     <ClInclude Include="fms_prob.h" />
     <ClInclude Include="fms_root1d.h" />
-    <ClInclude Include="hermite.h" />
+    <ClInclude Include="fms_hermite.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\xll12\xll12.vcxproj">
@@ -194,6 +194,7 @@
     <ClCompile Include="xll_bootstrap.cpp" />
     <ClCompile Include="xll_date.cpp" />
     <ClCompile Include="xll_fixed_income.cpp" />
+    <ClCompile Include="xll_njr.cpp" />
     <ClCompile Include="xll_prob.cpp" />
     <ClCompile Include="xll_black.cpp" />
     <ClCompile Include="xll_pwflat.cpp" />
