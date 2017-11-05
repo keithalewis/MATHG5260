@@ -2,7 +2,7 @@
 #pragma once
 namespace fms {
 namespace fixed_income {
-    // The floating leg of a swap can be modelled with two fixed cash flows:
+    // The floating leg of a swap can be modeled with two fixed cash flows:
     // +1 at the effective date and -1 at the termination date.
     template<class U = double, class C = double>
     struct swap : public instrument<U,C> {
@@ -35,7 +35,7 @@ namespace fixed_income {
 
             auto _u = set;
             for (size_t i = 1; i < size(); ++i) {
-                auto ui = fms::date::business_day_adjust(roll, set + ::date::months{i*freq}, holiday);
+                auto ui = fms::date::business_day_adjust(roll, set + ::date::months{i*12/freq}, holiday);
                 auto dui = ::date::sys_days(ui) - val;
                 time(i) = std::chrono::duration<U,::date::years::period>(dui).count();
                 cash(i) = rate*fms::date::day_count_fraction(dcb, _u, ui);

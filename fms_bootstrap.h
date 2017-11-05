@@ -1,6 +1,7 @@
 // fms_bootstrap.h - Bootstrap a piecewise flat forward curve.
 #pragma once
 #include <limits>
+#include "ensure.h"
 #include "fms_root1d.h"
 #include "fms_pwflat.h"
 #include "fms_fixed_income.h"
@@ -10,11 +11,11 @@ namespace pwflat {
 	
 	// Extrapolate curve to match price with present value.
 	template<class T, class F>
-	inline F bootstrap(F p, size_t m, const T* u, const F* c, size_t n, const T* t, const F* f, F _f = 0, bool use_newton = false)
+	inline std::pair<T,F> bootstrap(F p, size_t m, const T* u, const F* c, size_t n, const T* t, const F* f, F _f = 0, bool use_newton = false)
 	{
         // expiration must be past the end of the forward curve
-        if (m == 0 || n != 0 && u[m-1] <= t[n-1])
-            return std::numeric_limits<F>::quiet_NaN();
+        ensure (m > 0);
+        ensure (n == 0 || u[m-1] > t[n-1]);
         
         if (use_newton)
             goto use_newton_solve;
@@ -35,7 +36,7 @@ namespace pwflat {
         if (m == 1 || u[m - 2] <= t_) {
             auto pv = present_value(m - 1, u, c, n, t, f);
             
-            return log((p - pv)/(c_*D_))/(t_ - u_);
+            return std::make_pair(u_, log((p - pv)/(c_*D_))/(t_ - u_));
         }
 
         //!!! New Code
@@ -47,7 +48,7 @@ namespace pwflat {
             ensure (u[0] > t_);
             ensure (u[0] < u[1]);
 
-            return log(-c[0]/c[1])/(u[0] - u[1]);
+            return std::make_pair(u_, log(-c[0]/c[1])/(u[0] - u[1]));
         }
 
     use_newton_solve:
@@ -67,9 +68,14 @@ namespace pwflat {
 
 		_f = root1d::newton_solve<F,F>(_f, pv, dpv);
 
-		return _f;
+		return std::make_pair(u_,_f);
 	}
 
+	template<class T, class F>
+	inline std::pair<T,F> bootstrap(F p, const fixed_income::interface<T,F>& i, const pwflat::interface<T,F>& f, F _f = 0, bool use_newton = false)
+    {
+        return bootstrap(p, i.size(), i.time(), i.cash(), f.size(), f.time(), f.rate(), _f, use_newton)
+    }
     /*
     template<class T, class F>
     curve<T,F> bootstrap("container of instruments")

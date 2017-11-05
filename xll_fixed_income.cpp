@@ -124,8 +124,8 @@ static AddIn xai_fixed_income_cash_deposit(
 	Function(XLL_HANDLE, L"?xll_fixed_income_cash_deposit", PREFIX L"CASH.DEPOSIT")
 	.Arg(XLL_SHORT, L"settlement", L"is the number of days until the cash deposit settles.")
 	.Arg(XLL_SHORT, L"tenor", L"is the number of months until maturity.")
-    .Arg(XLL_SHORT, L"dcb", L"is the day count basis.")
-    .Arg(XLL_SHORT, L"roll", L"is the business day roll convention.")
+    .Arg(XLL_LONG, L"dcb", L"is the day count basis.")
+    .Arg(XLL_LONG, L"roll", L"is the business day roll convention.")
 	.Uncalced()
 	.Category(CATEGORY)
 	.FunctionHelp(L"Return a handle to a cash deposit.")
@@ -148,7 +148,7 @@ HANDLEX WINAPI xll_fixed_income_cash_deposit(short settlement, short tenor,
 }
 
 static AddIn xai_fixed_income_instrument_cash_deposit_fix(
-	Function(XLL_DOUBLE, L"?xll_fixed_income_instrument_cash_deposit_fix", PREFIX L"INSTRUMENT.CASH.DEPOSIT.FIX")
+	Function(XLL_DOUBLE, L"?xll_fixed_income_instrument_cash_deposit_fix", PREFIX L"CASH.DEPOSIT.FIX")
 	.Arg(XLL_HANDLE, L"handle", L"is a handle to a cash deposit.")
 	.Arg(XLL_DOUBLE, L"valuation", L"date at which rate is quoted.")
 	.Arg(XLL_DOUBLE, L"rate", L"is the cash deposit rate on valuation date.")
@@ -175,10 +175,10 @@ HANDLEX WINAPI xll_fixed_income_instrument_cash_deposit_fix(HANDLEX h, double va
 
 static AddIn xai_fixed_income_forward_rate_agreement(
 	Function(XLL_HANDLE, L"?xll_fixed_income_forward_rate_agreement", PREFIX L"FORWARD.RATE.AGREEMENT")
-	.Arg(XLL_SHORT, L"effective", L"is the date of the first cash flow.")
+	.Arg(XLL_DOUBLE, L"effective", L"is the date of the first cash flow.")
 	.Arg(XLL_SHORT, L"tenor", L"is the number of months until maturity.")
-    .Arg(XLL_SHORT, L"dcb", L"is the day count basis.")
-    .Arg(XLL_SHORT, L"roll", L"is the business day roll convention.")
+    .Arg(XLL_LONG, L"dcb", L"is the day count basis.")
+    .Arg(XLL_LONG, L"roll", L"is the business day roll convention.")
 	.Uncalced()
 	.Category(CATEGORY)
 	.FunctionHelp(L"Return a handle to a cash deposit.")
@@ -201,7 +201,7 @@ HANDLEX WINAPI xll_fixed_income_forward_rate_agreement(double effective, short t
 }
 
 static AddIn xai_fixed_income_instrument_forward_rate_agreement_fix(
-	Function(XLL_DOUBLE, L"?xll_fixed_income_instrument_forward_rate_agreement_fix", PREFIX L"INSTRUMENT.FORWARD.RATE.AGREEMENT.FIX")
+	Function(XLL_DOUBLE, L"?xll_fixed_income_instrument_forward_rate_agreement_fix", PREFIX L"FORWARD.RATE.AGREEMENT.FIX")
 	.Arg(XLL_HANDLE, L"handle", L"is a handle to a forward rate agreement.")
 	.Arg(XLL_DOUBLE, L"valuation", L"date at which rate is quoted.")
 	.Arg(XLL_DOUBLE, L"rate", L"is the cash deposit rate on valuation date.")
@@ -236,7 +236,7 @@ static AddIn xai_fixed_income_swap(
 	.Category(CATEGORY)
 	.FunctionHelp(L"Return a handle to a swap.")
 );
-HANDLEX WINAPI xll_fixed_income_swap(int settlement, short tenor,
+HANDLEX WINAPI xll_fixed_income_swap(short settlement, short tenor,
     fms::date::PAYMENT_FREQUENCY freq,
     fms::date::DAY_COUNT_BASIS dcb, fms::date::BUSINESS_DAY_ROLL roll)
 {
@@ -255,7 +255,7 @@ HANDLEX WINAPI xll_fixed_income_swap(int settlement, short tenor,
 }
 
 static AddIn xai_fixed_income_instrument_swap_fix(
-	Function(XLL_DOUBLE, L"?xll_fixed_income_instrument_swap_fix", PREFIX L"INSTRUMENT.FORWARD.RATE.AGREEMENT.FIX")
+	Function(XLL_DOUBLE, L"?xll_fixed_income_instrument_swap_fix", PREFIX L"SWAP.FIX")
 	.Arg(XLL_HANDLE, L"handle", L"is a handle to a forward rate agreement.")
 	.Arg(XLL_DOUBLE, L"valuation", L"date at which rate is quoted.")
 	.Arg(XLL_DOUBLE, L"rate", L"is the cash deposit rate on valuation date.")

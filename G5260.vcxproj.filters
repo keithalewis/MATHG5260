@@ -57,6 +57,12 @@
     <ClInclude Include="fms_fixed_income_swap.h">
       <Filter>fms</Filter>
     </ClInclude>
+    <ClInclude Include="bell.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="hermite.h">
+      <Filter>fms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="unique.cpp">

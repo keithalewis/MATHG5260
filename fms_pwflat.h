@@ -17,6 +17,7 @@
 #include <limits>    // quiet_Nan()
 #include <numeric>   // upper/lower_bound
 #include <vector>
+#include "ensure.h"
 
 namespace fms {
 namespace pwflat {
@@ -92,9 +93,15 @@ namespace pwflat {
     // https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Non-Virtual_Interface
     template<class T = double, class F = double>
     class interface {
+        size_t n;
+        const T* t;
+        const F* f;
     public:
         typedef T time_type;
         typedef F rate_type;
+        interface(size_t n = 0, const T* t = 0, const F* f = 0)
+            : n(n), t(t), f(f)
+        { }
         virtual ~interface() { }
         size_t   size() const { return _size(); }
         const T* time() const { return _time(); }
@@ -117,9 +124,18 @@ namespace pwflat {
         }
     private:
         // override in base class
-        virtual size_t   _size() const = 0;
-        virtual const T* _time() const = 0;
-        virtual const F* _rate() const = 0;
+        virtual size_t   _size() const
+        {
+            return n;
+        }
+        virtual const T* _time() const
+        {
+            return t;
+        }
+        virtual const F* _rate() const
+        {
+            return f;
+        }
     };
 
     template<class T = double, class F = double>
@@ -137,12 +153,12 @@ namespace pwflat {
         {
             ensure (t_.size() == f_.size());
         }
-        curve& push_back(const T& t, const F& f)
+        curve& push_back(const T& _t, const F& _f)
         {
-            ensure (t > t_.back());
+            ensure (_t > t_.back());
 
-            t_.push_back(t);
-            f_.push_back(f);
+            t_.push_back(_t);
+            f_.push_back(_f);
 
             return *this;
         }
@@ -210,7 +226,6 @@ namespace pwflat {
 } // fms
 
 #ifdef _DEBUG
-#include <cassert>
 #include <vector>
 
 inline void test_fms_pwflat()
@@ -221,105 +236,112 @@ inline void test_fms_pwflat()
 	std::vector<double> t_2{ 1 }, f_2{ .1 };
 	
 	{ // monotonic
-		assert (monotonic(std::begin(t), std::end(t)));
-		assert (monotonic(std::begin(f), std::end(f)));
+		ensure (monotonic(std::begin(t), std::end(t)));
+		ensure (monotonic(std::begin(f), std::end(f)));
 		double f2 = f[2];
 		f[2] = -1;
-		assert (!monotonic(std::begin(f), std::end(f)));
+		ensure (!monotonic(std::begin(f), std::end(f)));
 		f[2] = f2;
-		assert (!monotonic(std::rbegin(f), std::rend(f)));
+		ensure (!monotonic(std::rbegin(f), std::rend(f)));
 	}
 	{ // forward
 		//0, 0, null, null, null
-		assert (isnan(value<int,double>(0, 0, nullptr, nullptr)));
+		ensure (isnan(value<int,double>(0, 0, nullptr, nullptr)));
 		//1, 0, null, null, null
-		assert(isnan(value<int, double>(1, 0, nullptr, nullptr)));
+		ensure(isnan(value<int, double>(1, 0, nullptr, nullptr)));
 		//-1, 0, null, null, null
-		assert(isnan(value<int, double>(-1, 0, nullptr, nullptr)));
+		ensure(isnan(value<int, double>(-1, 0, nullptr, nullptr)));
 		//-1, 0, null, null, 0.2
-		assert(isnan(value<int, double>(-1, 0, nullptr, nullptr, 0.2)));
+		ensure(isnan(value<int, double>(-1, 0, nullptr, nullptr, 0.2)));
 		
 		int u;
 		u = 1;
 		double x{ 0.2 }, x_;
 		//1, 0, null, null, 0.2
 		x_ = fms::pwflat::value<int, double>(u, 0, nullptr, nullptr, x);
-		assert(x_ == x);
+		ensure(x_ == x);
 
 		double u_ [] = { -1, 0, 0.5, 1, 1.5 };
 		double a_ [] = { 0, 0.1, 0.1, 0.1, 0.2 };
 
 		for (int i = 0; i < 5; i++) {
 			if (i == 0 || i == 4) {
-				assert(isnan(value<double, double>(u_[i], t_2.size(), t_2.data(), f_2.data())));
+				ensure(isnan(value<double, double>(u_[i], t_2.size(), t_2.data(), f_2.data())));
 			}
 			else {
 				x_ = fms::pwflat::value<double, double>(u_[i], t_2.size(), t_2.data(), f_2.data());
-				assert(x_ == a_[i]);
+				ensure(x_ == a_[i]);
 			}
 		}
 
 		for (int i = 0; i < 5; i++) {
-			if (i == 0)
-				assert(isnan(value<double, double>(u_[i], t_2.size(), t_2.data(), f_2.data(), 0.2)));
-			else {
+			if (i == 0) {
+				ensure(isnan(value<double, double>(u_[i], t_2.size(), t_2.data(), f_2.data(), 0.2)));
+			}
+            else {
 				x_ = fms::pwflat::value<double, double>(u_[i], t_2.size(), t_2.data(), f_2.data(), 0.2);
-				assert(x_ == a_[i]);
+				ensure(x_ == a_[i]);
 			}
 		}
 
 		for (int i = 0; i < 3; ++i)
-			assert (f[i] == value(t[i], t.size(), t.data(), f.data()));
+			ensure (f[i] == value(t[i], t.size(), t.data(), f.data()));
 	}
 	{ // integral
 		double u;
 		u = -1;
-		assert (isnan(integral(u, t.size(), t.data(), f.data())));
+		ensure (isnan(integral(u, t.size(), t.data(), f.data())));
 		u = 4;
-		assert (isnan(integral(u, t.size(), t.data(), f.data())));
+		ensure (isnan(integral(u, t.size(), t.data(), f.data())));
 		u = 0;
-		assert (0 == integral(u, t.size(), t.data(), f.data()));
+		ensure (0 == integral(u, t.size(), t.data(), f.data()));
 		u = 0.5;
-		assert (.1*.5 == integral(u, t.size(), t.data(), f.data()));
+		ensure (.1*.5 == integral(u, t.size(), t.data(), f.data()));
 		u = 1;
-		assert (.1 == integral(u, t.size(), t.data(), f.data()));
+		ensure (.1 == integral(u, t.size(), t.data(), f.data()));
 		u = 1.5;
-		assert (.1 + .2*.5 == integral(u, t.size(), t.data(), f.data()));
+		ensure (.1 + .2*.5 == integral(u, t.size(), t.data(), f.data()));
 		u = 2.5;
-		assert (.1 + .2 + .3*.5 == integral(u, t.size(), t.data(), f.data()));
+		ensure (.1 + .2 + .3*.5 == integral(u, t.size(), t.data(), f.data()));
 		u = 3;
-		assert (fabs(.1 + .2 + .3 - integral(u, t.size(), t.data(), f.data())) < 1e-10);
-		assert (.1 + .2 + .3 != .6); 
+		ensure (fabs(.1 + .2 + .3 - integral(u, t.size(), t.data(), f.data())) < 1e-10);
+//		ensure (.1 + .2 + .3 != .6); 
 	}
 	{ // discount
 		double u_[] = { -.5, 0, .5, 1, 1.5, 2, 2.5, 3, 3.5 };
 		double f_[] = {0, 0, .05, .1, .2, .3, .45, .6, .7};
 		for (int i = 0; i < 9; i++) {
-			if (i == 0 || i == 8)
-				assert(isnan(discount(u_[i], t.size(), t.data(), f.data())));
-			else
-				assert(fabs(exp(-f_[i]) - discount(u_[i], t.size(), t.data(), f.data())) < 1e-10);
-		}
+			if (i == 0 || i == 8) {
+				ensure(isnan(discount(u_[i], t.size(), t.data(), f.data())));
+            } 
+            else {
+				ensure(fabs(exp(-f_[i]) - discount(u_[i], t.size(), t.data(), f.data())) < 1e-10);
+		    }
+        }
 
 		for (int i = 0; i < 9; i++) {
-			if (i == 0)
-				assert(isnan(discount(u_[i], t.size(), t.data(), f.data(), 0.2)));
-			else
-				assert(fabs(exp(-f_[i]) - discount(u_[i], t.size(), t.data(), f.data(), 0.2)) < 1e-10);
+			if (i == 0) {
+				ensure(isnan(discount(u_[i], t.size(), t.data(), f.data(), 0.2)));
+			}
+            else {
+				ensure(fabs(exp(-f_[i]) - discount(u_[i], t.size(), t.data(), f.data(), 0.2)) < 1e-10);
+            }
 		}
 	}
 	{ // spot
 		double u_[] = { -.5, 0, .5, 1, 1.5, 2, 2.5, 3, 3.5 };
 		double f_[] = { .1, .1, .1, .1, .2/1.5, .3/2, .45/2.5, .6/3, .7/3.5 };
 		for (int i = 0; i < 9; i++) {
-			if (i == 8)
-				assert(isnan(spot(u_[i], t.size(), t.data(), f.data())));
-			else
-				assert(fabs(f_[i] - spot(u_[i], t.size(), t.data(), f.data())) < 1e-10);
-		}
+			if (i == 8) {
+				ensure(isnan(spot(u_[i], t.size(), t.data(), f.data())));
+			}
+            else {
+				ensure(fabs(f_[i] - spot(u_[i], t.size(), t.data(), f.data())) < 1e-10);
+		    }
+        }
 
 		for (int i = 0; i < 9; i++) {
-			assert(fabs(f_[i] - spot(u_[i], t.size(), t.data(), f.data(), 0.2)) < 1e-10);
+			ensure(fabs(f_[i] - spot(u_[i], t.size(), t.data(), f.data(), 0.2)) < 1e-10);
 		}
 	}
 	{ // present_value
@@ -332,23 +354,23 @@ inline void test_fms_pwflat()
 		};
 		double c_[] = { 0, 1, 2, 3, 4 };
 
-		//assert(isnan(present_value(1, u_, c_, t.size(), t.data(), f.data())));
-		//assert(isnan(present_value(1, u_, c_, t.size(), t.data(), f.data(), 0.2)));
+		//ensure(isnan(present_value(1, u_, c_, t.size(), t.data(), f.data())));
+		//ensure(isnan(present_value(1, u_, c_, t.size(), t.data(), f.data(), 0.2)));
 
 		double sum = 0;
 		for (int i = 0; i < 5; i++) {
 			sum += c_[i] * d_[i];
 			if (i == 4) {
 				double tmp = present_value<double, double>(i + 1, u_, c_, t.size(), t.data(), f.data(), 0.2);
-				assert(tmp == tmp);
-				assert(fabs(sum - present_value(i + 1, u_, c_, t.size(), t.data(), f.data(), 0.2)) < 1e-10);
-				assert(isnan(present_value(i + 1, u_, c_, t.size(), t.data(), f.data())));
+				ensure(tmp == tmp);
+				ensure(fabs(sum - present_value(i + 1, u_, c_, t.size(), t.data(), f.data(), 0.2)) < 1e-10);
+				ensure(isnan(present_value(i + 1, u_, c_, t.size(), t.data(), f.data())));
 			}
 			else {
 				double tmp = present_value<double, double>(i + 1, u_, c_, t.size(), t.data(), f.data(), 0.2);
-				assert(tmp == tmp);
-				assert(fabs(sum - present_value(i + 1, u_, c_, t.size(), t.data(), f.data(), 0.2)) < 1e-10);
-				assert(fabs(sum - present_value(i + 1, u_, c_, t.size(), t.data(), f.data())) < 1e-10);
+				ensure(tmp == tmp);
+				ensure(fabs(sum - present_value(i + 1, u_, c_, t.size(), t.data(), f.data(), 0.2)) < 1e-10);
+				ensure(fabs(sum - present_value(i + 1, u_, c_, t.size(), t.data(), f.data())) < 1e-10);
 			}
 		}
 		
