@@ -1,6 +1,8 @@
 // xll_fixed_income.cpp - Fixed Income instruments
 #include "fms_fixed_income.h"
 #include "fms_fixed_income_cash_deposit.h"
+#include "fms_fixed_income_forward_rate_agreement.h"
+#include "fms_fixed_income_swap.h"
 #include "G5260.h"
 
 using namespace fms;
@@ -9,6 +11,7 @@ using namespace xll;
 #ifdef _DEBUG
 
 xll::test xll_test_fixed_income_intrument([](){
+    //_crtBreakAlloc = 3255;
     fixed_income::test_fms_fixed_income_instrument();
     fixed_income::test_fms_fixed_income_cash_deposit();
 });
@@ -121,8 +124,8 @@ static AddIn xai_fixed_income_cash_deposit(
 	Function(XLL_HANDLE, L"?xll_fixed_income_cash_deposit", PREFIX L"CASH.DEPOSIT")
 	.Arg(XLL_SHORT, L"settlement", L"is the number of days until the cash deposit settles.")
 	.Arg(XLL_SHORT, L"tenor", L"is the number of months until maturity.")
-    .Arg(XLL_SHORT, L"dcb", L"is the day count basis.")
-    .Arg(XLL_SHORT, L"roll", L"is the business day roll convention.")
+    .Arg(XLL_LONG, L"dcb", L"is the day count basis.")
+    .Arg(XLL_LONG, L"roll", L"is the business day roll convention.")
 	.Uncalced()
 	.Category(CATEGORY)
 	.FunctionHelp(L"Return a handle to a cash deposit.")
@@ -145,7 +148,7 @@ HANDLEX WINAPI xll_fixed_income_cash_deposit(short settlement, short tenor,
 }
 
 static AddIn xai_fixed_income_instrument_cash_deposit_fix(
-	Function(XLL_DOUBLE, L"?xll_fixed_income_instrument_cash_deposit_fix", PREFIX L"INSTRUMENT.CASH.DEPOSIT.FIX")
+	Function(XLL_DOUBLE, L"?xll_fixed_income_instrument_cash_deposit_fix", PREFIX L"CASH.DEPOSIT.FIX")
 	.Arg(XLL_HANDLE, L"handle", L"is a handle to a cash deposit.")
 	.Arg(XLL_DOUBLE, L"valuation", L"date at which rate is quoted.")
 	.Arg(XLL_DOUBLE, L"rate", L"is the cash deposit rate on valuation date.")
@@ -153,6 +156,113 @@ static AddIn xai_fixed_income_instrument_cash_deposit_fix(
 	.FunctionHelp(L"Fix times and cash flows of the cash deposit.")
 );
 HANDLEX WINAPI xll_fixed_income_instrument_cash_deposit_fix(HANDLEX h, double valuation, double rate)
+{
+#pragma XLLEXPORT
+	try {
+		xll::handle<fixed_income::instrument<>> h_(h);
+		ensure(h_);
+		h_->fix(fms::date::excel_date(valuation), rate);
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+
+        return handlex{};
+	}
+
+	return h;
+}
+
+
+static AddIn xai_fixed_income_forward_rate_agreement(
+	Function(XLL_HANDLE, L"?xll_fixed_income_forward_rate_agreement", PREFIX L"FORWARD.RATE.AGREEMENT")
+	.Arg(XLL_DOUBLE, L"effective", L"is the date of the first cash flow.")
+	.Arg(XLL_SHORT, L"tenor", L"is the number of months until maturity.")
+    .Arg(XLL_LONG, L"dcb", L"is the day count basis.")
+    .Arg(XLL_LONG, L"roll", L"is the business day roll convention.")
+	.Uncalced()
+	.Category(CATEGORY)
+	.FunctionHelp(L"Return a handle to a cash deposit.")
+);
+HANDLEX WINAPI xll_fixed_income_forward_rate_agreement(double effective, short tenor,
+    fms::date::DAY_COUNT_BASIS dcb, fms::date::BUSINESS_DAY_ROLL roll)
+{
+#pragma XLLEXPORT
+	handlex h;
+
+	try {
+		xll::handle<fixed_income::instrument<>> h_(new fixed_income::forward_rate_agreement<>(fms::date::excel_date(effective), ::date::months{ tenor }, dcb, roll));
+		h = h_.get();
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+	}
+
+	return h;
+}
+
+static AddIn xai_fixed_income_instrument_forward_rate_agreement_fix(
+	Function(XLL_DOUBLE, L"?xll_fixed_income_instrument_forward_rate_agreement_fix", PREFIX L"FORWARD.RATE.AGREEMENT.FIX")
+	.Arg(XLL_HANDLE, L"handle", L"is a handle to a forward rate agreement.")
+	.Arg(XLL_DOUBLE, L"valuation", L"date at which rate is quoted.")
+	.Arg(XLL_DOUBLE, L"rate", L"is the cash deposit rate on valuation date.")
+	.Category(CATEGORY)
+	.FunctionHelp(L"Fix times and cash flows of the cash deposit.")
+);
+HANDLEX WINAPI xll_fixed_income_instrument_forward_rate_agreement_fix(HANDLEX h, double valuation, double rate)
+{
+#pragma XLLEXPORT
+	try {
+		xll::handle<fixed_income::instrument<>> h_(h);
+		ensure(h_);
+		h_->fix(fms::date::excel_date(valuation), rate);
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+
+        return handlex{};
+	}
+
+	return h;
+}
+
+static AddIn xai_fixed_income_swap(
+	Function(XLL_HANDLE, L"?xll_fixed_income_swap", PREFIX L"SWAP")
+	.Arg(XLL_SHORT, L"settlement", L"is the number of days until the swap settles.")
+	.Arg(XLL_SHORT, L"tenor", L"is the number of months until maturity.")
+    .Arg(XLL_SHORT, L"freq", L"is the payment frequency of the fixed leg.")
+    .Arg(XLL_SHORT, L"dcb", L"is the day count basis.")
+    .Arg(XLL_SHORT, L"roll", L"is the business day roll convention.")
+	.Uncalced()
+	.Category(CATEGORY)
+	.FunctionHelp(L"Return a handle to a swap.")
+);
+HANDLEX WINAPI xll_fixed_income_swap(short settlement, short tenor,
+    fms::date::PAYMENT_FREQUENCY freq,
+    fms::date::DAY_COUNT_BASIS dcb, fms::date::BUSINESS_DAY_ROLL roll)
+{
+#pragma XLLEXPORT
+	handlex h;
+
+	try {
+		xll::handle<fixed_income::instrument<>> h_(new fixed_income::swap<>(::date::days(settlement), ::date::years{ tenor }, freq, dcb, roll));
+		h = h_.get();
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+	}
+
+	return h;
+}
+
+static AddIn xai_fixed_income_instrument_swap_fix(
+	Function(XLL_DOUBLE, L"?xll_fixed_income_instrument_swap_fix", PREFIX L"SWAP.FIX")
+	.Arg(XLL_HANDLE, L"handle", L"is a handle to a forward rate agreement.")
+	.Arg(XLL_DOUBLE, L"valuation", L"date at which rate is quoted.")
+	.Arg(XLL_DOUBLE, L"rate", L"is the cash deposit rate on valuation date.")
+	.Category(CATEGORY)
+	.FunctionHelp(L"Fix times and cash flows of the cash deposit.")
+);
+HANDLEX WINAPI xll_fixed_income_instrument_swap_fix(HANDLEX h, double valuation, double rate)
 {
 #pragma XLLEXPORT
 	try {

@@ -22,7 +22,40 @@ HANDLEX WINAPI xll_pwflat_curve(const _FP12* pt, const _FP12* pr)
         ensure (size(*pt) == size(*pr));
         ensure (pwflat::monotonic(begin(*pt), end(*pt)));
 
-        xll::handle<pwflat::interface<>> h_(new pwflat::curve<>(size(*pt), pt->array, pr->array));
+        xll::handle<pwflat::curve<>> h_(new pwflat::curve<>(size(*pt), pt->array, pr->array));
+        h = h_.get();
+    }
+    catch (const std::exception& ex) {
+        XLL_ERROR(ex.what());
+    }
+
+    return h;
+}
+static AddIn xai_pwflat_curve_extend(
+    Function(XLL_HANDLE, L"?xll_pwflat_curve_extend", L"PWFLAT.CURVE.EXTEND")
+    .Arg(XLL_HANDLE, L"handle", L"is a handle to a piecewise flat curve.")
+    .Arg(XLL_FP, L"times", L"is an array of times.")
+    .Arg(XLL_FP, L"rates", L"is an array of rates.")
+    .Category(CATEGORY)
+    .FunctionHelp(L"Return a handle to a piecewise flat curve.")
+);
+
+HANDLEX WINAPI xll_pwflat_curve_extend(HANDLEX h0, const _FP12* pt, const _FP12* pr)
+{
+#pragma XLLEXPORT
+    handlex h;
+
+    try {
+        ensure (size(*pt) == size(*pr));
+        ensure (pwflat::monotonic(begin(*pt), end(*pt)));
+        
+        xll::handle<pwflat::curve<>> h_(h0);
+        ensure (h_);
+
+        for (int i = 0; i < size(*pt); ++i) {
+            h_->push_back(pt->array[i], pr->array[i]);
+        }
+  
         h = h_.get();
     }
     catch (const std::exception& ex) {
@@ -46,20 +79,20 @@ _FP12* WINAPI xll_pwflat_value(HANDLEX h, const _FP12* pt, double _f)
     static xll::FP12 f;
 
     try {
-        xll::handle<pwflat::interface<>> h_(h);
-        ensure (h_);
+        xll::handle<pwflat::curve<>> c_(h);
+        ensure (c_);
         auto n = size(*pt);
         if (pt->rows == 1)
             f.resize(1, n);
         else
-            f.resize(pt->rows, pt->columns);
+            f.resize(n, 1);
 
         if (_f == 0) {
             _f = std::numeric_limits<double>::quiet_NaN();
         }
 
         for (int i = 0; i < n; ++i) {
-            f[i] = h_->value(pt->array[i], _f);
+            f[i] = (*c_)(pt->array[i], _f);
         }
     }
     catch (const std::exception& ex) {

@@ -54,6 +54,15 @@
     <ClInclude Include="fms_fixed_income_forward_rate_agreement.h">
       <Filter>fms</Filter>
     </ClInclude>
+    <ClInclude Include="fms_fixed_income_swap.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="fms_bell.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="fms_hermite.h">
+      <Filter>fms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="unique.cpp">
@@ -78,6 +87,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="xll_prob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xll_range.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xll_njr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

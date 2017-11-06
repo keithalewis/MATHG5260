@@ -15,9 +15,17 @@ namespace fixed_income {
     // NVI instrument interface.
     template<class U = double, class C = double>
     class interface {
+        size_t n;
+        U* u;
+        C* c;
     public:
         typedef U time_type;
         typedef C cash_type;
+        interface(size_t n = 0, U* u = 0, C* c = 0)
+            : n(n), u(u), c(c)
+        { }
+        interface(const interface&) = default;
+        interface& operator=(const interface&) = default;
         virtual ~interface() {}
         size_t   size() const { return _size(); }
         const U* time() const { return _time(); }
@@ -52,9 +60,18 @@ namespace fixed_income {
             return _cash()[i];
         }
     private:
-        virtual size_t   _size() const = 0;
-        virtual U* _time() const = 0;
-        virtual C* _cash() const = 0;
+        virtual size_t   _size() const
+        {
+            return n;
+        }
+        virtual U* _time() const
+        {
+            return u;
+        }
+        virtual C* _cash() const
+        {
+            return c;
+        }
     };
 
     // Generic fixed income instrument.
