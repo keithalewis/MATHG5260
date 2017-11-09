@@ -27,6 +27,7 @@ LPOPER WINAPI xll_range_get(HANDLEX ho)
 {
 #pragma XLLEXPORT
     xll::handle<OPER> h(ho);
+    
     return h.ptr();
 }
 
@@ -58,6 +59,61 @@ LPOPER WINAPI xll_range_mask(LPXLOPER12 pr, LPXLOPER12 pm)
         else
             o.resize(1, j);
 
+    }
+    catch (const std::exception& ex) {
+        XLL_ERROR(ex.what());
+
+        o = OPER(xlerr::NA);
+    }
+
+    return &o;
+}
+
+static AddIn xai_range_push_back(
+    Function(XLL_LPOPER, L"?xll_range_push_back", L"RANGE.STACK")
+    .Arg(XLL_LPOPER, L"range", L"is a range of cells.")
+    .Arg(XLL_LPOPER, L"range", L"is a range of cells.")
+    .Arg(XLL_LPOPER, L"range", L"is a range of cells.")
+    .Category(CATEGORY)
+    .FunctionHelp(L"Return ranges joined together.")
+);
+LPOPER WINAPI xll_range_push_back(const LPOPER po0, const LPOPER po1, const LPOPER po2)
+{
+#pragma XLLEXPORT
+    static OPER o;
+
+    try {
+        o = *po0;
+        if (*po1) {
+            o.push_back(*po1);
+            if (*po2) {
+                o.push_back(*po2);
+            }
+        }
+    }
+    catch (const std::exception& ex) {
+        XLL_ERROR(ex.what());
+
+        o = OPER(xlerr::NA);
+    }
+
+    return &o;
+}
+
+static AddIn xai_range_make(
+    Function(XLL_LPOPER, L"?xll_range_make", L"RANGE.MAKE")
+    .Arg(XLL_WORD, L"rows", L"is the number of rows in the returned range.")
+    .Arg(XLL_WORD, L"columns", L"is a numberg of columns in the returned range.")
+    .Category(CATEGORY)
+    .FunctionHelp(L"Return ranges with given rows and columns.")
+);
+LPOPER WINAPI xll_range_make(WORD rows, WORD columns)
+{
+#pragma XLLEXPORT
+    static OPER o;
+
+    try {
+        o.resize(rows, columns);
     }
     catch (const std::exception& ex) {
         XLL_ERROR(ex.what());

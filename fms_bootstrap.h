@@ -74,7 +74,7 @@ namespace pwflat {
 	template<class T, class F>
 	inline std::pair<T,F> bootstrap(F p, const fixed_income::interface<T,F>& i, const pwflat::interface<T,F>& f, F _f = 0, bool use_newton = false)
     {
-        return bootstrap(p, i.size(), i.time(), i.cash(), f.size(), f.time(), f.rate(), _f, use_newton)
+        return bootstrap(p, i.size(), i.time(), i.cash(), f.size(), f.time(), f.rate(), _f, use_newton);
     }
     /*
     template<class T, class F>
@@ -83,8 +83,7 @@ namespace pwflat {
         curve<T,F> f;
 
         for (const auto& i : instruments) {
-            T t = i.maturity();
-            f.push_back(make_pair(t, bootstrap(i.price, i, f)));
+            f.push_back(bootstrap(i.price, i, f)));
         }
 
         return f;

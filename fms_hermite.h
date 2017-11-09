@@ -1,5 +1,5 @@
 ﻿// hermit.h - Hermite polynomials
-// H_{n+1}(x) = x H_n(x)−n H_{n−1}(x), H_0(x) = 1, H_1(x) = 2. 
+// H_{n+1}(x) = x H_n(x)−n H_{n−1}(x), H_0(x) = 1, H_1(x) = x. 
 #pragma once
 namespace fms {
 

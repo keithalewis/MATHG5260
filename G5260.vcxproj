@@ -177,6 +177,7 @@
     <ClInclude Include="fms_fixed_income.h" />
     <ClInclude Include="fms_fixed_income_forward_rate_agreement.h" />
     <ClInclude Include="fms_fixed_income_swap.h" />
+    <ClInclude Include="fms_jordan.h" />
     <ClInclude Include="fms_pwflat.h" />
     <ClInclude Include="G5260.h" />
     <ClInclude Include="fms_prob.h" />
