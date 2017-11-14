@@ -66,6 +66,9 @@
     <ClInclude Include="fms_jordan.h">
       <Filter>fms</Filter>
     </ClInclude>
+    <ClInclude Include="fms_njr.h">
+      <Filter>fms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="unique.cpp">

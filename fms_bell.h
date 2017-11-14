@@ -21,14 +21,19 @@ namespace fms {
         return choose(n - 1, k) + choose(n - 1, k - 1);
     }
 
-    //!!! Return B_n(x[1-1],...,x[n-1])
+    // B_n(x_1,...,x_n}) = sum_0^{n-1} C(n-1,k) B_{n-1-k}(x_1,...,x_{n-1-k}) x_{k+1}
     template<class X>
     inline X Bell(size_t n, const X* x)
     {
         if (n == 0)
             return 1;
 
-        return 0;
+        X B = 0;
+        for (size_t k = 0; k < n; ++k) {
+            B += choose(n - 1, k) * Bell(n - 1 - k, x)*x[k];
+        }
+
+        return B;
     }
 
     
@@ -44,7 +49,14 @@ namespace fms {
     {
         //!!! Add tests for Bell polynomials.
         //!!! for m = 0,...,4
-        //!!! and x = {.1,.01,001,.0001}
+        double x[] = {.1,.01,001,.0001};
+        ensure (Bell(0, x) == 1);
+        ensure (Bell(1, x) ==   x[0]);
+        ensure (Bell(2, x) ==   x[0]*x[0] + x[1]);
+        ensure (Bell(3, x) ==  (x[0]*x[0] + x[1])*x[0] + 2*x[0]*x[1] + x[2]);
+        ensure (Bell(4, x) == ((x[0]*x[0] + x[1])*x[0] + 2*x[0]*x[1] + x[2])*x[0]
+                           + 3*(x[0]*x[0] + x[1])*x[1]
+                           + 3*(x[0])*x[2] + x[3]);
     }
 
 #endif // _DEBUG
