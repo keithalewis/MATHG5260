@@ -47,8 +47,6 @@ namespace fms {
     
     inline void fms_bell_test(void)
     {
-        //!!! Add tests for Bell polynomials.
-        //!!! for m = 0,...,4
         double x[] = {.1,.01,001,.0001};
         ensure (Bell(0, x) == 1);
         ensure (Bell(1, x) ==   x[0]);
@@ -60,6 +58,5 @@ namespace fms {
     }
 
 #endif // _DEBUG
-
 
 } // fms
