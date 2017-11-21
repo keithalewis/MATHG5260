@@ -29,7 +29,6 @@ namespace pwflat {
         // last cash flow time
         auto u_ = u[m - 1];
 
-        //!!! New Code
         // If only one cash flow occurs past the end of the curve there is a closed form solution:
         // We have p = pv + c D e^{-f(u - t)}, where pv is the present value of all but the last
         // cash flow, c is the last cash flow, and u is the last cash flow time.
@@ -39,7 +38,6 @@ namespace pwflat {
             return std::make_pair(u_, log((p - pv)/(c_*D_))/(t_ - u_));
         }
 
-        //!!! New Code
         // If exactly two cash flows and price is 0, then we know u[0] > t_ or else
         // the previous case would hold.
         // 0 = c0 D exp(-f(u0 - t)) + c1 D exp(-f(u1 -t)) so
@@ -74,7 +72,7 @@ namespace pwflat {
 	template<class T, class F>
 	inline std::pair<T,F> bootstrap(F p, const fixed_income::interface<T,F>& i, const pwflat::interface<T,F>& f, F _f = 0, bool use_newton = false)
     {
-        return bootstrap(p, i.size(), i.time(), i.cash(), f.size(), f.time(), f.rate(), _f, use_newton)
+        return bootstrap(p, i.size(), i.time(), i.cash(), f.size(), f.time(), f.rate(), _f, use_newton);
     }
     /*
     template<class T, class F>
@@ -83,8 +81,7 @@ namespace pwflat {
         curve<T,F> f;
 
         for (const auto& i : instruments) {
-            T t = i.maturity();
-            f.push_back(make_pair(t, bootstrap(i.price, i, f)));
+            f.push_back(bootstrap(i.price, i, f)));
         }
 
         return f;
@@ -93,21 +90,17 @@ namespace pwflat {
 #ifdef _DEBUG
 #pragma warning(push)
 #pragma warning(disable: 4189)
-    //!!! Use the use_newton argument in bootstrap to test the 
-    //!!! one and two cash flow closed form solutions.
     inline void fms_pwflat_bootstrap_test(void)
     {
         double t[] = {1};
         double f[] = {0.1};
         
         {
-            //!!! test a cash deposit
             double u[] = {2};
             double c[] = {1 + 0.01*u[0]};
             double p = 1;
         }
         {
-            //!!! test a forward rate agreement
             double u[] = {2, 3};
             double c[] = {-1, 1 + 0.01};
             double p = 0;

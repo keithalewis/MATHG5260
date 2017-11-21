@@ -63,6 +63,18 @@
     <ClInclude Include="fms_hermite.h">
       <Filter>fms</Filter>
     </ClInclude>
+    <ClInclude Include="fms_jordan.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="fms_njr.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="fms_nsr.h">
+      <Filter>fms</Filter>
+    </ClInclude>
+    <ClInclude Include="fms_pwlinear.h">
+      <Filter>fms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="unique.cpp">
@@ -93,6 +105,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="xll_njr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xll_nsr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xll_pwlinear.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

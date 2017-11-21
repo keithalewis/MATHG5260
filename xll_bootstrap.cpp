@@ -12,7 +12,7 @@ AddIn xai_xll_bootstrap(
     .Arg(XLL_FP, L"curve", L"is a two row array of times and forwards or a handle to a pwflat curve.")
     .Arg(XLL_DOUBLE, L"initial", L"is an initial guess at the bootstrap value.")
     .Category(CATEGORY)
-    .FunctionHelp(L"Bootstrap a curve")
+    .FunctionHelp(L"A two row array of bootstrap time and rate that prices the instrument.")
 );
 _FP12* WINAPI xll_pwflat_bootstrap(double p, _FP12* pi, _FP12* pc, double f_)
 {
@@ -59,4 +59,36 @@ _FP12* WINAPI xll_pwflat_bootstrap(double p, _FP12* pi, _FP12* pc, double f_)
     }
 
     return tf.get();
+}
+
+AddIn xai_pwflat_curve_bootstrap(
+    Function(XLL_HANDLE, L"?xll_pwflat_curve_bootstrap", L"PWFLAT.CURVE.BOOTSTRAP")
+    .Arg(XLL_FP, L"instruments", L"is an array fixed income instrument handles.")
+    .Uncalced()
+    .Category(CATEGORY)
+    .FunctionHelp(L"Return a handle to a piecewise flat forward curve pricing each instrument to zero.")
+);
+HANDLEX WINAPI xll_pwflat_curve_bootstrap(_FP12* pi)
+{
+#pragma XLLEXPORT
+    handlex h;
+
+    try {
+        xll::handle<pwflat::curve<>> h_(new pwflat::curve<>{});
+        ensure (h_);
+
+        for (int i = 0; i < size(*pi); ++i) {
+            xll::handle<fixed_income::instrument<>> hi_(pi->array[i]);
+            h_->push_back(pwflat::bootstrap<>(0., *hi_, *h_));
+        }
+
+        h = h_.get();
+    }
+    catch (const std::exception& ex) {
+        XLL_ERROR(ex.what());
+
+        return 0;
+    }
+
+    return h;
 }

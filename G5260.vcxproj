@@ -177,7 +177,11 @@
     <ClInclude Include="fms_fixed_income.h" />
     <ClInclude Include="fms_fixed_income_forward_rate_agreement.h" />
     <ClInclude Include="fms_fixed_income_swap.h" />
+    <ClInclude Include="fms_jordan.h" />
+    <ClInclude Include="fms_njr.h" />
+    <ClInclude Include="fms_nsr.h" />
     <ClInclude Include="fms_pwflat.h" />
+    <ClInclude Include="fms_pwlinear.h" />
     <ClInclude Include="G5260.h" />
     <ClInclude Include="fms_prob.h" />
     <ClInclude Include="fms_root1d.h" />
@@ -195,9 +199,11 @@
     <ClCompile Include="xll_date.cpp" />
     <ClCompile Include="xll_fixed_income.cpp" />
     <ClCompile Include="xll_njr.cpp" />
+    <ClCompile Include="xll_nsr.cpp" />
     <ClCompile Include="xll_prob.cpp" />
     <ClCompile Include="xll_black.cpp" />
     <ClCompile Include="xll_pwflat.cpp" />
+    <ClCompile Include="xll_pwlinear.cpp" />
     <ClCompile Include="xll_range.cpp" />
   </ItemGroup>
   <ItemGroup>

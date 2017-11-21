@@ -155,7 +155,7 @@ namespace pwflat {
         }
         curve& push_back(const T& _t, const F& _f)
         {
-            ensure (_t > t_.back());
+            ensure (t_.size() == 0 || _t > t_.back());
 
             t_.push_back(_t);
             f_.push_back(_f);
