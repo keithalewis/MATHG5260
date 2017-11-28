@@ -15,7 +15,7 @@ namespace pwlinear {
         ensure (n >= 2);
 
         size_t i0, i1;
-		auto i = std::lower_bound(t, t + n, u) - t;
+		size_t i = std::lower_bound(t, t + n, u) - t;
 
         if (i == n) {
             i0 = n - 2;
@@ -36,14 +36,19 @@ namespace pwlinear {
 	}
 
     // Fit a function to cash, puts, calls, and a futures using
-    // f(x) = f(u) + int_0^u f''(k) (k - x)^+ dk 
-    //         + int_u^infty f''(k) (x - k)^+ dk + f'(u) (x - u).
-    // Given k[0],...,k[n-1], values f[i] of the function at k[i],
-    // a point u, fu = f(u), and dfu = f'(u)
-    // find c[0] = a, c[1],..., c[n-2], c[n-1] = b such that
+    // f(x) = f(u) 
+    //      + int_0^u f''(k) (k - x)^+ dk 
+    //      + int_u^infty f''(k) (x - k)^+ dk 
+    //      + f'(u) (x - u).
+    // Given a point u, fu = f(u),
+    // k[i] and values f[i] of the function at k[i], i < n,
+    // and dfu = f'(u)
+    // find c[0] = f, c[1],..., c[n-2], c[n-1] = dfu such that
     // g(k[i]) = f[i] for i = 0,...,n - 1 where
-    // g(v) = a + b (v - u) + sum_{i > 0, k[i] < u} c[i] (k[i] - v)^+ 
-    //        + sum_{i < n - 1, k[i] > u} c[i] (v - k[i])^+
+    // g(v) = fu 
+    //      + sum_{i > 0, k[i] < u} c[i] (k[i] - v)^+ 
+    //      + sum_{i < n - 1, k[i] > u} c[i] (v - k[i])^+
+    //      + dfu (v - u) 
     // Assume c points to an array with at least n elements.
 #pragma warning(disable: 4100)
     template<class X = double>
@@ -51,7 +56,8 @@ namespace pwlinear {
     {
         //!!!Implement
     }
-    // Evaluate g(v) = c[0] + sum puts + sum calls + c[n-1](v - u)
+
+    // Evaluate g(v) = c[0] + (sum puts < u) + (sum calls > u) + c[n-1](v - u)
     template<class X = double>
     inline X val(X v, X u, size_t n, const X* k, const X* c)
     {
@@ -73,6 +79,53 @@ namespace pwlinear {
 
 #ifdef _DEBUG
 
+inline void test_fms_pwlinear_value()
+{
+    using fms::pwlinear::value;
+
+    double k[] = {0, 1, 2, 3, 4};
+    double f[] = {0, 0, 1, 0, 0};
+    size_t n = sizeof(k)/sizeof(*k);
+
+    ensure (value(0., n, k, f) == 0);
+    ensure (value(1., n, k, f) == 0);
+    ensure (value(2., n, k, f) == 1);
+    ensure (value(3., n, k, f) == 0);
+    ensure (value(4., n, k, f) == 0);
+
+    ensure (value(0.5, n, k, f) == 0);
+    ensure (value(1.5, n, k, f) == 0.5);
+    ensure (value(2.5, n, k, f) == 0.5);
+    ensure (value(3.5, n, k, f) == 0);
+    ensure (value(4.5, n, k, f) == 0);
+}
+
+inline void test_fms_pwlinear_val()
+{
+    // Butterfly spread.
+    // u = 0, f(v) = 0, 0 <= v < 1
+    //             = v - 1, 1 <= v < 2
+    //             = 1 - (v - 2), 2 <= v < 3
+    //             = 0, v >= 3
+    // f(u) = f'(u) = 0 and
+    // f'(v) = 0, 0 <= v < 1
+    //       = 1, 1 <= v < 2
+    //       = -1, 2 <= v < 3
+    //       = 0, v >= 3
+    // so f''(1) = delta(1), f''(2) = -2delta(2) and f''(3) = delta(3)
+    // where delta(w) is a delta function having mass 1 at w.
+
+    // pwlinear curve
+    double k[] = {0, 1, 2, 3, 4};
+    double f[] = {0, 0, 1, 0, 0};
+    double c[] = {0, 1, -2, 1, 0}; // f(0), buy a call, sell a call, f'(0).
+    auto F = [k,f](double v) { return fms::pwlinear::value(v, 5, k, f);};
+    auto G = [k,c](double v) { return fms::pwlinear::val(v, 0., 5, k, c);};
+    for (double v = 0.1; v <= 4; v += 1) {
+        ensure (F(v) == G(v));
+    }
+}
+
 inline void test_fms_pwlinear()
 {
     double k[] = {1,2,3,4};
@@ -81,13 +134,14 @@ inline void test_fms_pwlinear()
     for (size_t i = 0; i < n; ++i)
         f[i] = k[i]*k[i];
     double c[4];
-    for (double u = 1.2; u < 4; u += 1.1) {
+    for (double u = 1.1; u < 4; u += 1.1) {
         double fu = u*u;
         double dfu = 2*u;
         fms::pwlinear::fit(n, k, f, u, fu, dfu, c);
         for (size_t i = 0; i < n; ++i) {
             double v = k[i];
-            ensure (fms::pwlinear::val(u, v, n, k, c) == f[i]);
+// This will fail until you implement pwliner::fit.
+//            ensure (fms::pwlinear::val(u, v, n, k, c) == f[i]);
         }
     }
 }

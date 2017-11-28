@@ -5,7 +5,8 @@
 using namespace fms;
 using namespace xll;
 
-static Auto<Open> xao_test_fms_pwlinear([]() {
+xll::test xll_test_pwlinear([]() {
+    test_fms_pwlinear_value();
+    test_fms_pwlinear_val();
     test_fms_pwlinear();
-    return TRUE;
 });
