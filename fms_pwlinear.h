@@ -109,6 +109,7 @@ namespace pwlinear {
 inline void test_fms_pwlinear_value()
 {
     using fms::pwlinear::value;
+    using fms::pwlinear::slope;
 
     double k[] = {0, 1, 2, 3, 4};
     double f[] = {0, 0, 1, 0, 0};
@@ -125,6 +126,12 @@ inline void test_fms_pwlinear_value()
     ensure (value(2.5, n, k, f) == 0.5);
     ensure (value(3.5, n, k, f) == 0);
     ensure (value(4.5, n, k, f) == 0);
+
+    ensure (slope(0.5, n, k, f) == 0);
+    ensure (slope(1.5, n, k, f) == 1);
+    ensure (slope(2.5, n, k, f) == -1);
+    ensure (slope(3.5, n, k, f) == 0);
+    ensure (slope(4.5, n, k, f) == 0);
 }
 
 inline void test_fms_pwlinear_val()
@@ -163,12 +170,12 @@ inline void test_fms_pwlinear()
     }
     double c[4];
     for (double u = 1.1; u < 4; u += 1.1) {
-        double fu = pwlinear::value(u, n, k, f);
-        double dfu = pwlinear::slope(u, n, k, f);
+        double fu = fms::pwlinear::value(u, n, k, f);
+        double dfu = fms::pwlinear::slope(u, n, k, f);
         fms::pwlinear::fit(n, k, f, u, fu, dfu, c);
         for (size_t i = 0; i < n; ++i) {
-            double v = k[i];
-// This will fail until you implement pwliner::fit.
+            //double v = k[i];
+// This will fail until you implement pwlinear::fit.
 //            ensure (fms::pwlinear::val(v, u, n, k, c) == f[i]);
         }
     }
