@@ -35,11 +35,38 @@ namespace pwlinear {
 		return f[i0] + m*(u - i0);
 	}
 
+    // piecewise linear curve
+	template<class T, class F>
+	inline F slope(const T& u, size_t n, const T* t, const F* f)
+	{
+        ensure (n >= 2);
+
+        size_t i0, i1;
+		size_t i = std::lower_bound(t, t + n, u) - t;
+
+        if (i == n) {
+            i0 = n - 2;
+            i1 = n - 1;
+        }
+        else if (i == 0) {
+            i0 = 0;
+            i1 = 1;
+        }
+        else {
+            i0 = i - 1;
+            i1 = i;
+        }
+
+        auto m = (f[i0] - f[i1])/(t[i0] - t[i1]);
+
+		return m;
+	}
+
     // Fit a function to cash, puts, calls, and a futures using
-    // f(x) = f(u) 
-    //      + int_0^u f''(k) (k - x)^+ dk 
-    //      + int_u^infty f''(k) (x - k)^+ dk 
-    //      + f'(u) (x - u).
+    // f(v) = f(u) 
+    //      + int_0^u f''(k) (k - v)^+ dk 
+    //      + int_u^infty f''(k) (v - k)^+ dk 
+    //      + f'(u) (v - u).
     // Given a point u, fu = f(u),
     // k[i] and values f[i] of the function at k[i], i < n,
     // and dfu = f'(u)
@@ -131,17 +158,18 @@ inline void test_fms_pwlinear()
     double k[] = {1,2,3,4};
     size_t n = sizeof(k)/sizeof(k[0]); // dimof(k)
     double f[4]; // f(x) = x^2
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         f[i] = k[i]*k[i];
+    }
     double c[4];
     for (double u = 1.1; u < 4; u += 1.1) {
-        double fu = u*u;
-        double dfu = 2*u;
+        double fu = pwlinear::value(u, n, k, f);
+        double dfu = pwlinear::slope(u, n, k, f);
         fms::pwlinear::fit(n, k, f, u, fu, dfu, c);
         for (size_t i = 0; i < n; ++i) {
             double v = k[i];
 // This will fail until you implement pwliner::fit.
-//            ensure (fms::pwlinear::val(u, v, n, k, c) == f[i]);
+//            ensure (fms::pwlinear::val(v, u, n, k, c) == f[i]);
         }
     }
 }
