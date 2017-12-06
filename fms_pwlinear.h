@@ -32,7 +32,7 @@ namespace pwlinear {
 
         auto m = (f[i0] - f[i1])/(t[i0] - t[i1]);
 
-		return f[i0] + m*(u - i0);
+		return f[i0] + m*(u - t[i0]);
 	}
 
     // piecewise linear curve
@@ -81,7 +81,15 @@ namespace pwlinear {
     template<class X = double>
     inline void fit(size_t n, const X* k, const X* f, X u, X fu, X dfu, X* c)
     {
-        //!!!Implement
+        for (size_t i = 1; i < n; ++i) {
+            c[i] = slope((k[i-1]+k[i])/2, n, k, f);
+        }
+        for (size_t i = 1; i < n - 1; ++i) {
+            c[i] = c[i + 1] - c[i];
+        }
+
+        c[0] = fu;
+        c[n-1] = dfu;
     }
 
     // Evaluate g(v) = c[0] + (sum puts < u) + (sum calls > u) + c[n-1](v - u)
@@ -174,9 +182,9 @@ inline void test_fms_pwlinear()
         double dfu = fms::pwlinear::slope(u, n, k, f);
         fms::pwlinear::fit(n, k, f, u, fu, dfu, c);
         for (size_t i = 0; i < n; ++i) {
-            //double v = k[i];
+            double v = k[i];
 // This will fail until you implement pwlinear::fit.
-//            ensure (fms::pwlinear::val(v, u, n, k, c) == f[i]);
+            ensure (fms::pwlinear::val(v, u, n, k, c) == f[i]);
         }
     }
 }
