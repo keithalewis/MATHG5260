@@ -33,12 +33,5 @@ namespace nsr {
         // ensure (t < u);
 		return sigma*sigma*u*u*(u - t);
     }
-
-    /*
-        Var B_t = t;
-        Cov (B_t, B_u) = Cov (B_t, B_u - B_t + B_t) = Cov (B_t, B_t) = t
-        B_u - B_t ~ B_{u - t}
-    */
-
 } // namespace nsr
 } // namespace fms
