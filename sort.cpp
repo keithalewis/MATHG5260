@@ -18,12 +18,7 @@ LPOPER WINAPI xll_sort(LPOPER po)
 
     try {
         std::sort(po->begin(), po->end());
-        if (po->rows() == 1) {
-            o.resize(1, po->columns());
-        }
-        else {
-            o.resize(po->rows(), po->columns());
-        }
+        o.resize(po->rows(), po->columns());
         std::copy(po->begin(), po->end(), o.begin());
     }
     catch (const std::exception& ex) {

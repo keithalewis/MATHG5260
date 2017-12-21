@@ -113,6 +113,9 @@
     <ClCompile Include="xll_pwlinear.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="final.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

@@ -32,7 +32,7 @@ double WINAPI xll_black_put(double f, double sigma, double k, double t)
 #ifdef _DEBUG
 
 xll::test xll_test_black_put([]() {
-    black::test_put();
+    fms_test_black_put();
 });
 
 #endif // _DEBUG
@@ -64,7 +64,7 @@ double WINAPI xll_black_put_vega(double f, double sigma, double k, double t)
 #ifdef _DEBUG
 
 xll::test xll_test_black_put_vega([]() {
-    black::test_put_vega();
+    fms_test_black_put_vega();
 });
 
 #endif // _DEBUG

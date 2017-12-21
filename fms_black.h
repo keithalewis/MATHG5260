@@ -13,7 +13,7 @@ A put option with strike k has forward value
 E max{k - F, 0}.
 
 If N is normal, then E exp(N) = exp(E(N) + Var(N)/2)).
-Also E f exp(N) g(N) = E f exp(N) E g(N + Var(N)).
+Also E exp(N) g(N) = E exp(N) E g(N + Var(N)).
 
 So E max{k - F, 0}
  = E (k - F) 1(F <= k)
@@ -27,15 +27,15 @@ So E max{k - F, 0}
  Let s = sigma sqrt(t)
  Z = B_t/sqrt(t) ~ N(0,1)
 
+ The following are equivalent:
  F <= k
  f exp(-s^2/2 + s Z) <= k
  -s^2/2 + s Z <= log(k/f)
  Z <= (s^2/2 + log(k/f))/s = z
 
- F exp(s^2) <= k
- Z <= (-s^2/2 + log(k/f)/s = z^*
+ Also F exp(s^2) <= k if and only if Z <= (-s^2/2 + log(k/f)/s = z^*
 
- E max{k - F, 0} = k N(z) - f N(z^*).
+ Hence E max{k - F, 0} = k N(z) - f N(z^*).
 
  d/df E g(F) = E g'(F) F/f = E g'(F exp(s^2))
 */
@@ -89,41 +89,11 @@ namespace fms {
         {
             return value(f, sigma*sqrt(t), k);
         }
-#ifdef _DEBUG
-        namespace {
-            void test_put(void)
-            {
-                double f = 100;
-                double sigma = .2;
-                double k = 100;
-                double t = .25;
-                double p = put(f, sigma, k, t);
-                double eps = std::numeric_limits<double>::epsilon();
-                ensure (fabs(p - put(f, sigma, k, t)) < 3*eps);
-            }
-        }
-#endif // _DEBUG
         template<class F, class S, class K, class T>
         inline auto put_delta(F f, S sigma, K k, T t)
         {
             return delta(f, sigma*sqrt(t), k);
         }
-#ifdef _DEBUG
-        namespace {
-            void test_put_delta(void)
-            {
-                double f = 100;
-                double sigma = .2;
-                double k = 100;
-                double t = .25;
-                double eps = sqrt(std::numeric_limits<double>::epsilon());
-                double up = put(f + eps, sigma, k, t);
-                double dn = put(f - eps, sigma, k, t);
-                double delta = (up - dn)/(2*eps);
-                ensure (fabs(delta - put_delta(f, sigma, k, t)) < 3*eps);
-            }
-        }
-#endif // _DEBUG
 
         template<class F, class S, class K, class T>
         inline auto put_vega(F f, S sigma, K k, T t)
@@ -140,22 +110,6 @@ namespace fms {
             
             return f*n*sqt;
         }
-#ifdef _DEBUG
-        namespace {
-            void test_put_vega(void)
-            {
-                double f = 100;
-                double sigma = .2;
-                double k = 100;
-                double t = .25;
-                double eps = sqrt(std::numeric_limits<double>::epsilon());
-                double up = put(f, sigma + eps, k, t);
-                double dn = put(f, sigma - eps, k, t);
-                double vega = (up - dn)/(2*eps);
-                ensure (fabs(vega - put_vega(f, sigma, k, t)) < 3*eps);
-            }
-        }
-#endif // _DEBUG
         // volatility that matches put price
         template<class F, class P, class K, class T>
         inline auto put_implied_volatility(F f, P p, K k, T t, 
@@ -189,3 +143,42 @@ namespace fms {
     } // namespace black
 
 } // namespace fms
+
+#ifdef _DEBUG
+void fms_test_black_put(void)
+{
+    double f = 100;
+    double sigma = .2;
+    double k = 100;
+    double t = .25;
+    double p = fms::black::put(f, sigma, k, t);
+    double eps = std::numeric_limits<double>::epsilon();
+    ensure (fabs(p - fms::black::put(f, sigma, k, t)) < 3*eps);
+}
+
+void fms_test_black_put_delta(void)
+{
+    double f = 100;
+    double sigma = .2;
+    double k = 100;
+    double t = .25;
+    double eps = sqrt(std::numeric_limits<double>::epsilon());
+    double up = fms::black::put(f + eps, sigma, k, t);
+    double dn = fms::black::put(f - eps, sigma, k, t);
+    double delta = (up - dn)/(2*eps);
+    ensure (fabs(delta - fms::black::put_delta(f, sigma, k, t)) < 3*eps);
+}
+
+void fms_test_black_put_vega(void)
+{
+    double f = 100;
+    double sigma = .2;
+    double k = 100;
+    double t = .25;
+    double eps = sqrt(std::numeric_limits<double>::epsilon());
+    double up = fms::black::put(f, sigma + eps, k, t);
+    double dn = fms::black::put(f, sigma - eps, k, t);
+    double vega = (up - dn)/(2*eps);
+    ensure (fabs(vega - fms::black::put_vega(f, sigma, k, t)) < 3*eps);
+}
+#endif // _DEBUG

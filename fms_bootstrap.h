@@ -11,15 +11,14 @@ namespace pwflat {
 	
 	// Extrapolate curve to match price with present value.
 	template<class T, class F>
-	inline std::pair<T,F> bootstrap(F p, size_t m, const T* u, const F* c, size_t n, const T* t, const F* f, F _f = 0, bool use_newton = false)
+	inline std::pair<T,F> bootstrap(F p, 
+        size_t m, const T* u, const F* c, 
+        size_t n, const T* t, const F* f, F _f = 0)
 	{
         // expiration must be past the end of the forward curve
         ensure (m > 0);
         ensure (n == 0 || u[m-1] > t[n-1]);
         
-        if (use_newton)
-            goto use_newton_solve;
-
         // end of curve 
         auto t_ = n == 0 ? 0 : t[n-1];
         // discount to end
@@ -49,8 +48,6 @@ namespace pwflat {
             return std::make_pair(u_, log(-c[0]/c[1])/(u[0] - u[1]));
         }
 
-    use_newton_solve:
-
         std::function<F(F)> pv = [p, m, u, c, n, t, f](F _f) {
 			return -p + present_value(m, u, c, n, t, f, _f);
 		};
@@ -70,9 +67,11 @@ namespace pwflat {
 	}
 
 	template<class T, class F>
-	inline std::pair<T,F> bootstrap(F p, const fixed_income::interface<T,F>& i, const pwflat::interface<T,F>& f, F _f = 0, bool use_newton = false)
+	inline std::pair<T,F> bootstrap(F p, 
+        const fixed_income::interface<T,F>& i, 
+        const pwflat::interface<T,F>& f, F _f = 0)
     {
-        return bootstrap(p, i.size(), i.time(), i.cash(), f.size(), f.time(), f.rate(), _f, use_newton);
+        return bootstrap(p, i.size(), i.time(), i.cash(), f.size(), f.time(), f.rate(), _f);
     }
     /*
     template<class T, class F>
@@ -87,6 +86,9 @@ namespace pwflat {
         return f;
     }
     */
+}
+} // namespace fms
+
 #ifdef _DEBUG
 #pragma warning(push)
 #pragma warning(disable: 4189)
@@ -108,5 +110,3 @@ namespace pwflat {
     }
 #pragma warning(pop)
 #endif // _DEBUG
-}
-} // namespace fms

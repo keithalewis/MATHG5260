@@ -5,6 +5,10 @@
 using namespace xll;
 using namespace fms;
 
+xll::test xll_pwflat_bootstrap_test([]() {
+    fms_pwflat_bootstrap_test(); 
+});
+
 AddIn xai_xll_bootstrap(
     Function(XLL_FP, L"?xll_pwflat_bootstrap", L"PWFLAT.BOOTSTRAP")
     .Arg(XLL_DOUBLE, L"price", L"is the price of the instrument.")
@@ -51,6 +55,7 @@ _FP12* WINAPI xll_pwflat_bootstrap(double p, _FP12* pi, _FP12* pc, double f_)
         }
 
         std::tie(tf[0],tf[1]) = pwflat::bootstrap(p, m, u, c, n, t, f, f_);
+        //auto [tf[0],tf[1]] = pwflat::bootstrap(p, m, u, c, n, t, f, f_);
     }
     catch (const std::exception& ex) {
         XLL_ERROR(ex.what());

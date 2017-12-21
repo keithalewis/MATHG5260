@@ -193,6 +193,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="final.cpp" />
     <ClCompile Include="sort.cpp" />
     <ClCompile Include="unique.cpp" />
     <ClCompile Include="xll_bootstrap.cpp" />
