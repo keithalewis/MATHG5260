@@ -1,6 +1,6 @@
 // final.cpp - G5260 final exam
-//!!! include other appropriate header files
 #include "G5260.h"
+//!!! include other appropriate header files
 
 using namespace xll;
 
@@ -12,7 +12,7 @@ using namespace xll;
 
 //!!! Document the formula you use to price the approximation to the binary option.
 
-#pragma warning(disable: 4100)
+#pragma warning(disable: 100)
 inline double approximate_binary(double k_, double c_, double _k, double _c)
 {
     return 0; //!!! implement here
@@ -25,8 +25,8 @@ inline double approximate_binary(double k_, double c_, double _k, double _c)
 
 xll::test approximate_binary_test([]() {
     double f = 100, k = 100, s = 0.01, k_ = 99, _k = 101;
-    double c_ = 0*f*k*s; //!!! Black call at k_
-    double _c = 0; //!!! Black call at _k
+    double c_ = 0; //!!! Black call at k_
+    double _c = 0; //!!! call at _k
     double ab = approximate_binary(k_, c_, _k, _c);
     double bc = 0; //!!! formula for binary call
     double eps = 0; //!!! find appropriate value

@@ -145,7 +145,7 @@ namespace fms {
 } // namespace fms
 
 #ifdef _DEBUG
-void fms_test_black_put(void)
+inline void fms_test_black_put(void)
 {
     double f = 100;
     double sigma = .2;
@@ -156,7 +156,7 @@ void fms_test_black_put(void)
     ensure (fabs(p - fms::black::put(f, sigma, k, t)) < 3*eps);
 }
 
-void fms_test_black_put_delta(void)
+inline void fms_test_black_put_delta(void)
 {
     double f = 100;
     double sigma = .2;
@@ -169,7 +169,7 @@ void fms_test_black_put_delta(void)
     ensure (fabs(delta - fms::black::put_delta(f, sigma, k, t)) < 3*eps);
 }
 
-void fms_test_black_put_vega(void)
+inline void fms_test_black_put_vega(void)
 {
     double f = 100;
     double sigma = .2;
