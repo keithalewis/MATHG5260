@@ -4,7 +4,7 @@
 // The class sys_days is a count of days from an epoch/time_point
 #pragma once
 #include <functional>
-#include "../date/include/date/date.h"
+#include "date/include/date/date.h"
 
 namespace fms {
 namespace date {
